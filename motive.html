@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Motive AI | motive.sharf.in</title>
+    <!-- Libraries -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #ffffff; color: #000000; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        .animate-in { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .pink-bg { background-color: #ff2d75; }
+        .pink-text { color: #ff2d75; }
+        .card { background-color: #ffffff; border: 1px solid #f1f5f9; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border-radius: 2rem; }
+        ::-webkit-scrollbar { width: 0px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const Icons = {
+            Motive: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>,
+            Check: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>,
+            News: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>,
+            Tasks: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
+            Chat: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+            Settings: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+            Loader: () => <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>,
+            Send: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polyline points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        };
+
+        const App = () => {
+            const [view, setView] = useState('home');
+            const [profile, setProfile] = useState(() => JSON.parse(localStorage.getItem('m_profile')) || null);
+            const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem('m_tasks')) || []);
+            const [news, setNews] = useState(() => localStorage.getItem('m_news') || "");
+            const [chat, setChat] = useState(() => JSON.parse(localStorage.getItem('m_chat')) || [{ role: 'ai', text: "Ready to push forward?" }]);
+            const [apiKey, setApiKey] = useState(() => localStorage.getItem('m_key') || "");
+            const [isSyncing, setIsSyncing] = useState(false);
+            const [chatInput, setChatInput] = useState("");
+            
+            const chatEndRef = useRef(null);
+
+            // Prioritize Key: User Settings > Netlify Snippet Injection
+            const activeKey = apiKey || window.NETLIFY_API_KEY || "";
+
+            useEffect(() => {
+                localStorage.setItem('m_profile', JSON.stringify(profile));
+                localStorage.setItem('m_tasks', JSON.stringify(tasks));
+                localStorage.setItem('m_news', news);
+                localStorage.setItem('m_chat', JSON.stringify(chat));
+                localStorage.setItem('m_key', apiKey);
+            }, [profile, tasks, news, chat, apiKey]);
+
+            // AUTO-SYNC MISSIONS
+            useEffect(() => {
+                if (view === 'tasks' && tasks.length === 0 && profile && activeKey && !isSyncing) {
+                    generateDailyTasks();
+                }
+            }, [view]);
+
+            useEffect(() => {
+                if (view === 'chat') chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            }, [chat, view]);
+
+            const callAI = async (prompt, system) => {
+                if (!activeKey) throw new Error("API Key required. Setup in Netlify or Settings.");
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${activeKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: system }] }
+                    })
+                });
+                const data = await response.json();
+                if (data.error) throw new Error(data.error.message);
+                return data.candidates[0].content.parts[0].text;
+            };
+
+            const generateDailyTasks = async () => {
+                if (!profile) return;
+                setIsSyncing(true);
+                try {
+                    const system = `You are Motive AI. Generate exactly 5 daily actionable tasks for ${profile.name}, age ${profile.ageRange}, dream: ${profile.dream}. Tasks must be age-appropriate. Return ONLY a numbered list 1-5.`;
+                    const res = await callAI("Give me my 5 daily missions.", system);
+                    const lines = res.split('\n').filter(l => l.match(/^\d\./));
+                    setTasks(lines.slice(0, 5).map(l => ({ id: Math.random(), text: l.replace(/^\d\.\s*/, '').trim(), done: false })));
+                } catch (e) { console.error(e); }
+                finally { setIsSyncing(false); }
+            };
+
+            const generateNews = async () => {
+                if (!profile) return;
+                setIsSyncing(true);
+                try {
+                    const system = `Motivating 2-sentence news update for ${profile.name} regarding ${profile.dream}. Max 40 words.`;
+                    const res = await callAI("Fetch my ambition update.", system);
+                    setNews(res);
+                } catch (e) { alert(e.message); }
+                finally { setIsSyncing(false); }
+            };
+
+            const handleChat = async (e) => {
+                if (e) e.preventDefault();
+                if (!chatInput.trim() || isSyncing) return;
+                const userMsg = chatInput.trim();
+                setChat(prev => [...prev, { role: 'user', text: userMsg }]);
+                setChatInput("");
+                setIsSyncing(true);
+                try {
+                    const res = await callAI(userMsg, `Mindset coach for ${profile.name}, dream: ${profile.dream}. Max 2 sentences.`);
+                    setChat(prev => [...prev, { role: 'ai', text: res }]);
+                } catch (e) { setChat(prev => [...prev, { role: 'ai', text: `Error: ${e.message}` }]); }
+                finally { setIsSyncing(false); }
+            };
+
+            if (!profile) return (
+                <div className="min-h-screen flex items-center justify-center p-8 animate-in">
+                    <div className="w-full max-w-md space-y-10">
+                        <div className="text-center"><h1 className="text-5xl font-extrabold pink-text uppercase">Motive AI</h1></div>
+                        <form className="space-y-5" onSubmit={(e) => {
+                            e.preventDefault();
+                            const fd = new FormData(e.target);
+                            setProfile({ name: fd.get('name'), dream: fd.get('dream'), ageRange: fd.get('age') });
+                        }}>
+                            <input name="name" required className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl p-5 font-bold outline-none focus:border-[#ff2d75]" placeholder="Full Name" />
+                            <input name="dream" required className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl p-5 font-bold outline-none focus:border-[#ff2d75]" placeholder="Your Dream" />
+                            <select name="age" className="w-full bg-slate-50 border-2 border-slate-100 rounded-3xl p-5 font-bold outline-none focus:border-[#ff2d75] appearance-none">
+                                <option>10 - 15</option><option>15 - 20</option><option>20 - 25</option><option>25 - 30</option><option>30+</option>
+                            </select>
+                            <button type="submit" className="w-full pink-bg text-white font-black py-6 rounded-3xl shadow-xl uppercase tracking-widest text-sm active:scale-95 transition-all">Launch</button>
+                        </form>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="min-h-screen flex flex-col max-w-lg mx-auto bg-white border-x border-slate-50">
+                    <header className="p-6 border-b border-slate-50 flex justify-between items-center bg-white sticky top-0 z-50">
+                        <div><span className="text-[9px] font-bold pink-text uppercase tracking-widest">Operator</span><h2 className="font-extrabold text-lg leading-none">{profile.name}</h2></div>
+                        <div className="text-right"><span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Target</span><h2 className="font-extrabold text-lg pink-text leading-none">{profile.dream}</h2></div>
+                    </header>
+
+                    <main className={`flex-grow p-6 space-y-8 ${view === 'chat' ? 'pb-24' : 'pb-32'}`}>
+                        {view === 'home' && (
+                            <div className="space-y-8 animate-in text-center">
+                                <div className="bg-white rounded-[3rem] p-12 card border border-slate-100 space-y-8 mt-4">
+                                    <div className="w-20 h-20 bg-pink-50 text-[#ff2d75] rounded-3xl flex items-center justify-center mx-auto shadow-inner rotate-6"><Icons.Motive /></div>
+                                    <h1 className="text-5xl font-black italic uppercase leading-none">One Day<br/>OR<br/><span className="pink-text">Day One</span></h1>
+                                </div>
+                                <button onClick={() => setView('tasks')} className="w-full bg-black text-white py-6 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl">Start Missions</button>
+                            </div>
+                        )}
+
+                        {view === 'tasks' && (
+                            <div className="space-y-6 animate-in">
+                                <div className="flex justify-between items-end px-2"><h2 className="text-2xl font-black uppercase">Missions</h2>{tasks.length > 0 && <button onClick={generateDailyTasks} disabled={isSyncing} className="pink-text font-black text-[10px] uppercase">{isSyncing ? <Icons.Loader /> : "Reset List"}</button>}</div>
+                                {tasks.length === 0 ? <div className="bg-slate-50 border-2 border-dashed border-slate-100 rounded-[2.5rem] p-16 text-center"><Icons.Loader /><div className="mt-4 text-slate-400 font-bold uppercase text-[10px] animate-pulse">Syncing with AI...</div></div> : (
+                                    <div className="space-y-3">{tasks.map(t => (
+                                        <div key={t.id} onClick={() => setTasks(tasks.map(x => x.id === t.id ? {...x, done: !x.done} : x))} className={`flex items-center gap-4 p-6 rounded-[2rem] border transition-all ${t.done ? 'bg-slate-50 opacity-40 border-transparent' : 'bg-white border-slate-100 shadow-sm'}`}>
+                                            <div className={`w-7 h-7 rounded-xl flex items-center justify-center border-2 ${t.done ? 'pink-bg border-[#ff2d75] text-white shadow-pink-100' : 'border-slate-100 text-transparent'}`}><Icons.Check /></div>
+                                            <span className={`flex-grow font-bold text-sm ${t.done ? 'line-through text-slate-400' : 'text-black'}`}>{t.text}</span>
+                                        </div>
+                                    ))}</div>
+                                )}
+                            </div>
+                        )}
+
+                        {view === 'news' && (
+                            <div className="animate-in space-y-6">
+                                <div className="bg-white rounded-[3rem] p-10 border border-slate-50 card space-y-10 text-center mt-4">
+                                    <div className="w-16 h-16 bg-slate-50 text-black rounded-2xl flex items-center justify-center mx-auto -rotate-6 border border-slate-100"><Icons.News /></div>
+                                    <h2 className="font-black text-2xl uppercase">Ambition Report</h2>
+                                    {!news ? <div className="py-8 text-slate-300 font-black uppercase text-xs italic tracking-widest">No news</div> : <div className="p-8 bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-100"><p className="text-xl font-bold italic leading-snug">"{news}"</p></div>}
+                                    <button onClick={generateNews} disabled={isSyncing} className="w-full pink-bg text-white py-6 rounded-3xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-pink-100 disabled:opacity-50">{isSyncing ? <Icons.Loader /> : "Refresh Feed"}</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'chat' && (
+                            <div className="animate-in flex flex-col h-[calc(100vh-280px)]">
+                                <div className="flex-grow overflow-y-auto space-y-4 px-2 no-scrollbar">{chat.map((msg, i) => (<div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[85%] p-4 rounded-3xl font-bold text-sm leading-relaxed ${msg.role === 'user' ? 'bg-black text-white rounded-br-none shadow-md' : 'bg-slate-50 text-black rounded-bl-none border border-slate-100'}`}>{msg.text}</div></div>))}{isSyncing && <div className="text-[10px] font-black uppercase tracking-widest text-slate-300 animate-pulse italic">Thinking...</div>}<div ref={chatEndRef} /></div>
+                                <form onSubmit={handleChat} className="mt-4 relative"><input value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Message coach..." className="w-full bg-slate-100 rounded-3xl p-5 pr-14 font-bold outline-none focus:ring-2 ring-[#ff2d75]/10" /><button type="submit" disabled={!chatInput.trim() || isSyncing} className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 pink-bg text-white rounded-2xl flex items-center justify-center disabled:opacity-30"><Icons.Send /></button></form>
+                            </div>
+                        )}
+
+                        {view === 'settings' && (
+                            <div className="animate-in space-y-6 text-center">
+                                <div className="bg-white rounded-[3rem] p-10 border card space-y-10 mt-4">
+                                    <div className="flex items-center gap-4"><div className="p-4 bg-slate-50 rounded-2xl border pink-text"><Icons.Settings /></div><h2 className="font-black text-xl uppercase">Setup</h2></div>
+                                    <div className="space-y-6"><input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] p-5 font-mono text-xs outline-none focus:border-[#ff2d75]" placeholder="Paste Gemini Key (Optional if set in Netlify)" /><button onClick={() => { if(confirm("Reset profile?")) { localStorage.clear(); window.location.reload(); } }} className="w-full bg-white border-2 border-slate-100 py-5 rounded-[1.5rem] font-black uppercase text-[10px] text-red-500">Reset OS Profile</button></div>
+                                </div>
+                                <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest pt-4">motive.sharf.in</p>
+                            </div>
+                        )}
+                    </main>
+
+                    <nav className="fixed bottom-0 left-0 right-0 bg-[#ff2d75] text-white p-5 pb-10 md:pb-6 z-50 shadow-2xl border-t border-white/10 max-w-lg mx-auto">
+                        <div className="flex justify-around items-center">
+                            {[{ id: 'home', Icon: Icons.Motive, label: 'Motive' }, { id: 'tasks', Icon: Icons.Tasks, label: 'Missions' }, { id: 'news', Icon: Icons.News, label: 'News' }, { id: 'chat', Icon: Icons.Chat, label: 'Chat' }, { id: 'settings', Icon: Icons.Settings, label: 'Settings' }].map(item => (
+                                <button key={item.id} onClick={() => setView(item.id)} className={`flex flex-col items-center gap-1 transition-all ${view === item.id ? 'opacity-100 scale-110' : 'opacity-40'}`}><item.Icon /><span className="text-[8px] font-black uppercase tracking-tighter">{item.label}</span></button>
+                            ))}
+                        </div>
+                    </nav>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
