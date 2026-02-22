@@ -519,21 +519,22 @@ async function loadSurah(num) {
 
 async function fetchVerses(num) {
   try {
-    const [arRes, enRes] = await Promise.all([
+    const [arRes, enRes, mlRes] = await Promise.all([
       fetch(`https://api.alquran.cloud/v1/surah/${num}/ar.alafasy`),
-      fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`)
+      fetch(`https://api.alquran.cloud/v1/surah/${num}/en.sahih`),
+      fetch(`https://api.alquran.cloud/v1/surah/${num}/ml.abdulhameed`)
     ]);
-    const [arData, enData] = await Promise.all([arRes.json(), enRes.json()]);
+    const [arData, enData, mlData] = await Promise.all([arRes.json(), enRes.json(), mlRes.json()]);
     if (arData.code !== 200) throw new Error('API error');
 
     const arabicVerses = arData.data.ayahs;
     const engVerses = enData.data.ayahs;
-    const mlVerses = ML_TRANSLATIONS[num] || null;
+    const mlVerses = mlData.code === 200 ? mlData.data.ayahs : null;
 
     // Store for TTS
     loadedVerses.arabic = arabicVerses.map(v => v.text);
     loadedVerses.english = engVerses.map(v => v.text);
-    loadedVerses.malayalam = mlVerses || [];
+    loadedVerses.malayalam = mlVerses ? mlVerses.map(v => v.text) : [];
 
     document.getElementById('loadingState').style.display = 'none';
     const area = document.getElementById('versesArea');
@@ -541,7 +542,7 @@ async function fetchVerses(num) {
 
     area.innerHTML = arabicVerses.map((av, i) => {
       const ev = engVerses[i];
-      const ml = mlVerses && mlVerses[i] ? mlVerses[i] : null;
+      const ml = mlVerses && mlVerses[i] ? mlVerses[i].text : null;
       return buildVerseCard(av, ev, ml, i + 1, num);
     }).join('');
 
