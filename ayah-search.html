@@ -412,16 +412,171 @@ const data = {
     ]
   },
   prophet: {
-    label: "Prophet Muhammad ﷺ",
-    ayaat: [
-      { arabic: "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ", translation: "And We have not sent you except as a mercy to the worlds.", surah: "Al-Anbiya", verse: "21:107" },
-      { arabic: "مُّحَمَّدٌ رَّسُولُ اللَّهِ ۚ وَالَّذِينَ مَعَهُ أَشِدَّاءُ عَلَى الْكُفَّارِ رُحَمَاءُ بَيْنَهُمْ", translation: "Muhammad is the Messenger of Allah; and those with him are forceful against the disbelievers, merciful among themselves.", surah: "Al-Fath", verse: "48:29" },
-      { arabic: "لَقَدْ كَانَ لَكُمْ فِي رَسُولِ اللَّهِ أُسْوَةٌ حَسَنَةٌ", translation: "There has certainly been for you in the Messenger of Allah an excellent pattern [of conduct].", surah: "Al-Ahzab", verse: "33:21" },
-      { arabic: "إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ ۚ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا", translation: "Indeed, Allah confers blessing upon the Prophet, and His angels [ask Him to do so]. O you who have believed, ask [Allah to confer] blessing upon him and ask [Allah to grant him] peace.", surah: "Al-Ahzab", verse: "33:56" },
-      { arabic: "وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ", translation: "And indeed, you are of a great moral character.", surah: "Al-Qalam", verse: "68:4" },
-      { arabic: "مَا كَانَ مُحَمَّدٌ أَبَا أَحَدٍ مِّن رِّجَالِكُمْ وَلَٰكِن رَّسُولَ اللَّهِ وَخَاتَمَ النَّبِيِّينَ", translation: "Muhammad is not the father of [any] one of your men, but [he is] the Messenger of Allah and the seal of the prophets.", surah: "Al-Ahzab", verse: "33:40" },
-      { arabic: "قُلْ إِن كُنتُمْ تُحِبُّونَ اللَّهَ فَاتَّبِعُونِي يُحْبِبْكُمُ اللَّهُ وَيَغْفِرْ لَكُمْ ذُنُوبَكُمْ", translation: "Say: If you should love Allah, then follow me, [so] Allah will love you and forgive you your sins.", surah: "Aal-Imran", verse: "3:31" },
-      { arabic: "وَمَا يَنطِقُ عَنِ الْهَوَىٰ ۝ إِنْ هُوَ إِلَّا وَحْيٌ يُوحَىٰ", translation: "Nor does he speak from [his own] inclination. It is not but a revelation revealed.", surah: "An-Najm", verse: "53:3-4" },
+    label: "The 25 Prophets",
+    isProphetSection: true,
+    prophets: [
+      {
+        number: 1, name: "Adam (آدم)", arabic_name: "آدَمُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَإِذْ قَالَ رَبُّكَ لِلْمَلَائِكَةِ إِنِّي جَاعِلٌ فِي الْأَرْضِ خَلِيفَةً", translation: "And [mention] when your Lord said to the angels, 'Indeed, I will make upon the earth a successive authority.'", surah: "Al-Baqarah", verse: "2:30" },
+          { arabic: "وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا", translation: "And He taught Adam the names of all things.", surah: "Al-Baqarah", verse: "2:31" },
+        ]
+      },
+      {
+        number: 2, name: "Idris (إدريس)", arabic_name: "إِدْرِيسُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَاذْكُرْ فِي الْكِتَابِ إِدْرِيسَ ۚ إِنَّهُ كَانَ صِدِّيقًا نَّبِيًّا", translation: "And mention in the Book, Idris. Indeed, he was a man of truth and a prophet.", surah: "Maryam", verse: "19:56" },
+          { arabic: "وَرَفَعْنَاهُ مَكَانًا عَلِيًّا", translation: "And We raised him to a high station.", surah: "Maryam", verse: "19:57" },
+        ]
+      },
+      {
+        number: 3, name: "Nuh (نوح)", arabic_name: "نُوحُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "إِنَّا أَرْسَلْنَا نُوحًا إِلَىٰ قَوْمِهِ أَنْ أَنذِرْ قَوْمَكَ مِن قَبْلِ أَن يَأْتِيَهُمْ عَذَابٌ أَلِيمٌ", translation: "Indeed, We sent Noah to his people, [saying], 'Warn your people before there comes to them a painful punishment.'", surah: "Nuh", verse: "71:1" },
+          { arabic: "سَلَامٌ عَلَىٰ نُوحٍ فِي الْعَالَمِينَ", translation: "Peace upon Noah among the worlds.", surah: "As-Saffat", verse: "37:79" },
+        ]
+      },
+      {
+        number: 4, name: "Hud (هود)", arabic_name: "هُودُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَإِلَىٰ عَادٍ أَخَاهُمْ هُودًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ مَا لَكُم مِّنْ إِلَٰهٍ غَيْرُهُ", translation: "And to the people of 'Aad [We sent] their brother Hud. He said, 'O my people, worship Allah; you have no deity other than Him.'", surah: "Al-A'raf", verse: "7:65" },
+        ]
+      },
+      {
+        number: 5, name: "Salih (صالح)", arabic_name: "صَالِحُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَإِلَىٰ ثَمُودَ أَخَاهُمْ صَالِحًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ", translation: "And to the Thamud [We sent] their brother Salih. He said, 'O my people, worship Allah.'", surah: "Al-A'raf", verse: "7:73" },
+        ]
+      },
+      {
+        number: 6, name: "Ibrahim (إبراهيم)", arabic_name: "إِبْرَاهِيمُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَاتَّخَذَ اللَّهُ إِبْرَاهِيمَ خَلِيلًا", translation: "And Allah took Ibrahim as an intimate friend.", surah: "An-Nisa", verse: "4:125" },
+          { arabic: "إِنَّ إِبْرَاهِيمَ كَانَ أُمَّةً قَانِتًا لِّلَّهِ حَنِيفًا", translation: "Indeed, Ibrahim was a [comprehensive] leader, devoutly obedient to Allah, inclining toward truth.", surah: "An-Nahl", verse: "16:120" },
+        ]
+      },
+      {
+        number: 7, name: "Lut (لوط)", arabic_name: "لُوطُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَلُوطًا آتَيْنَاهُ حُكْمًا وَعِلْمًا", translation: "And to Lut We gave judgment and knowledge.", surah: "Al-Anbiya", verse: "21:74" },
+        ]
+      },
+      {
+        number: 8, name: "Ismail (إسماعيل)", arabic_name: "إِسْمَاعِيلُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَاذْكُرْ فِي الْكِتَابِ إِسْمَاعِيلَ ۚ إِنَّهُ كَانَ صَادِقَ الْوَعْدِ وَكَانَ رَسُولًا نَّبِيًّا", translation: "And mention in the Book, Ismail. Indeed, he was true to his promise, and was a messenger and prophet.", surah: "Maryam", verse: "19:54" },
+        ]
+      },
+      {
+        number: 9, name: "Ishaq (إسحاق)", arabic_name: "إِسْحَاقُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَوَهَبْنَا لَهُ إِسْحَاقَ وَيَعْقُوبَ ۚ كُلًّا هَدَيْنَا", translation: "And We gave him Isaac and Jacob — each of them We guided.", surah: "Al-An'am", verse: "6:84" },
+        ]
+      },
+      {
+        number: 10, name: "Yaqub (يعقوب)", arabic_name: "يَعْقُوبُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "أَمْ كُنتُمْ شُهَدَاءَ إِذْ حَضَرَ يَعْقُوبَ الْمَوْتُ", translation: "Or were you witnesses when death approached Jacob?", surah: "Al-Baqarah", verse: "2:133" },
+        ]
+      },
+      {
+        number: 11, name: "Yusuf (يوسف)", arabic_name: "يُوسُفُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "لَّقَدْ كَانَ فِي يُوسُفَ وَإِخْوَتِهِ آيَاتٌ لِّلسَّائِلِينَ", translation: "Certainly were there in Joseph and his brothers signs for those who ask.", surah: "Yusuf", verse: "12:7" },
+          { arabic: "إِنَّهُ مَن يَتَّقِ وَيَصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", translation: "Indeed, he who fears Allah and is patient — then indeed Allah does not allow to be lost the reward of those who do good.", surah: "Yusuf", verse: "12:90" },
+        ]
+      },
+      {
+        number: 12, name: "Shuaib (شعيب)", arabic_name: "شُعَيْبُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَإِلَىٰ مَدْيَنَ أَخَاهُمْ شُعَيْبًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ", translation: "And to Madyan [We sent] their brother Shuaib. He said, 'O my people, worship Allah.'", surah: "Al-A'raf", verse: "7:85" },
+        ]
+      },
+      {
+        number: 13, name: "Ayyub (أيوب)", arabic_name: "أَيُّوبُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَأَيُّوبَ إِذْ نَادَىٰ رَبَّهُ أَنِّي مَسَّنِيَ الضُّرُّ وَأَنتَ أَرْحَمُ الرَّاحِمِينَ", translation: "And [mention] Job, when he called to his Lord, 'Indeed, adversity has touched me, and you are the Most Merciful of the merciful.'", surah: "Al-Anbiya", verse: "21:83" },
+        ]
+      },
+      {
+        number: 14, name: "Dhul-Kifl (ذو الكفل)", arabic_name: "ذُو الْكِفْلِ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَإِسْمَاعِيلَ وَإِدْرِيسَ وَذَا الْكِفْلِ ۖ كُلٌّ مِّنَ الصَّابِرِينَ", translation: "And Ismail and Idris and Dhul-Kifl — all were of the patient.", surah: "Al-Anbiya", verse: "21:85" },
+        ]
+      },
+      {
+        number: 15, name: "Musa (موسى)", arabic_name: "مُوسَى عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَكَلَّمَ اللَّهُ مُوسَىٰ تَكْلِيمًا", translation: "And to Moses Allah spoke directly.", surah: "An-Nisa", verse: "4:164" },
+          { arabic: "إِنِّي أَنَا اللَّهُ لَا إِلَٰهَ إِلَّا أَنَا فَاعْبُدْنِي وَأَقِمِ الصَّلَاةَ لِذِكْرِي", translation: "Indeed, I am Allah. There is no deity except Me, so worship Me and establish prayer for My remembrance.", surah: "Ta-Ha", verse: "20:14" },
+        ]
+      },
+      {
+        number: 16, name: "Harun (هارون)", arabic_name: "هَارُونُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَوَهَبْنَا لَهُ مِن رَّحْمَتِنَا أَخَاهُ هَارُونَ نَبِيًّا", translation: "And We gave him out of Our mercy his brother Aaron as a prophet.", surah: "Maryam", verse: "19:53" },
+        ]
+      },
+      {
+        number: 17, name: "Dawud (داود)", arabic_name: "دَاوُودُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَآتَيْنَا دَاوُودَ زَبُورًا", translation: "And to David We gave the Psalms.", surah: "An-Nisa", verse: "4:163" },
+          { arabic: "وَقَتَلَ دَاوُودُ جَالُوتَ وَآتَاهُ اللَّهُ الْمُلْكَ وَالْحِكْمَةَ", translation: "And David killed Goliath, and Allah gave him the kingship and prophethood and taught him from that which He willed.", surah: "Al-Baqarah", verse: "2:251" },
+        ]
+      },
+      {
+        number: 18, name: "Sulaiman (سليمان)", arabic_name: "سُلَيْمَانُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَوَرِثَ سُلَيْمَانُ دَاوُودَ ۖ وَقَالَ يَا أَيُّهَا النَّاسُ عُلِّمْنَا مَنطِقَ الطَّيْرِ", translation: "And Solomon inherited David. He said, 'O people, we have been taught the language of birds.'", surah: "An-Naml", verse: "27:16" },
+        ]
+      },
+      {
+        number: 19, name: "Ilyas (إلياس)", arabic_name: "إِلْيَاسُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَإِنَّ إِلْيَاسَ لَمِنَ الْمُرْسَلِينَ", translation: "And indeed, Ilyas was among the messengers.", surah: "As-Saffat", verse: "37:123" },
+        ]
+      },
+      {
+        number: 20, name: "Al-Yasa (اليسع)", arabic_name: "الْيَسَعُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "وَإِسْمَاعِيلَ وَالْيَسَعَ وَيُونُسَ وَلُوطًا ۚ وَكُلًّا فَضَّلْنَا عَلَى الْعَالَمِينَ", translation: "And Ismail and Al-Yasa and Yunus and Lut — and all [of them] We preferred over the worlds.", surah: "Al-An'am", verse: "6:86" },
+        ]
+      },
+      {
+        number: 21, name: "Yunus (يونس)", arabic_name: "يُونُسُ عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "فَنَادَىٰ فِي الظُّلُمَاتِ أَن لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ", translation: "And he called out within the darknesses, 'There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.'", surah: "Al-Anbiya", verse: "21:87" },
+        ]
+      },
+      {
+        number: 22, name: "Zakariyya (زكريا)", arabic_name: "زَكَرِيَّا عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "هُنَالِكَ دَعَا زَكَرِيَّا رَبَّهُ ۖ قَالَ رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً", translation: "At that point Zakariyya called upon his Lord, saying, 'My Lord, grant me from Yourself a good offspring.'", surah: "Aal-Imran", verse: "3:38" },
+        ]
+      },
+      {
+        number: 23, name: "Yahya (يحيى)", arabic_name: "يَحْيَى عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "يَا يَحْيَىٰ خُذِ الْكِتَابَ بِقُوَّةٍ ۖ وَآتَيْنَاهُ الْحُكْمَ صَبِيًّا", translation: "O Yahya, take the Scripture with determination. And We gave him judgement [while yet] a boy.", surah: "Maryam", verse: "19:12" },
+        ]
+      },
+      {
+        number: 24, name: "Isa (عيسى)", arabic_name: "عِيسَى عَلَيْهِ السَّلَام",
+        ayaat: [
+          { arabic: "إِنَّ مَثَلَ عِيسَىٰ عِندَ اللَّهِ كَمَثَلِ آدَمَ ۖ خَلَقَهُ مِن تُرَابٍ", translation: "Indeed, the likeness of Jesus to Allah is as the likeness of Adam. He created him from dust.", surah: "Aal-Imran", verse: "3:59" },
+          { arabic: "وَجَعَلْنَا ابْنَ مَرْيَمَ وَأُمَّهُ آيَةً", translation: "And We made the son of Mary and his mother a sign.", surah: "Al-Mu'minun", verse: "23:50" },
+        ]
+      },
+      {
+        number: 25, name: "Muhammad ﷺ", arabic_name: "مُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّم",
+        ayaat: [
+          { arabic: "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ", translation: "And We have not sent you except as a mercy to the worlds.", surah: "Al-Anbiya", verse: "21:107" },
+          { arabic: "وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ", translation: "And indeed, you are of a great moral character.", surah: "Al-Qalam", verse: "68:4" },
+          { arabic: "لَقَدْ كَانَ لَكُمْ فِي رَسُولِ اللَّهِ أُسْوَةٌ حَسَنَةٌ", translation: "There has certainly been for you in the Messenger of Allah an excellent pattern of conduct.", surah: "Al-Ahzab", verse: "33:21" },
+          { arabic: "مُّحَمَّدٌ رَّسُولُ اللَّهِ ۚ وَخَاتَمَ النَّبِيِّينَ", translation: "Muhammad is the Messenger of Allah and the seal of the prophets.", surah: "Al-Ahzab", verse: "33:40" },
+          { arabic: "إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ ۚ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا", translation: "Indeed, Allah confers blessing upon the Prophet, and His angels do so as well. O believers, send blessings upon him and salutations.", surah: "Al-Ahzab", verse: "33:56" },
+        ]
+      },
     ]
   },
 };
