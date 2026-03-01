@@ -251,6 +251,72 @@
   }
 
   .stagger { animation-delay: calc(var(--i) * 0.07s); opacity: 0; }
+
+  /* Prophet section styles */
+  .prophet-section {
+    margin-bottom: 32px;
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  .prophet-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: linear-gradient(90deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--gold);
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 2px;
+  }
+
+  .prophet-number {
+    background: var(--gold);
+    color: var(--dark);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+
+  .prophet-name-block { flex: 1; }
+
+  .prophet-name-en {
+    font-size: 1rem;
+    letter-spacing: 2px;
+    color: var(--gold-light);
+    font-weight: 600;
+  }
+
+  .prophet-name-ar {
+    font-family: 'Amiri', serif;
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .prophet-ayaat { padding-left: 0; }
+
+  .prophet-ayaat .aya-card {
+    border-left: 3px solid rgba(201,168,76,0.4);
+    border-radius: 0;
+    margin-bottom: 2px;
+  }
+
+  .prophet-ayaat .aya-card:last-child {
+    border-radius: 0 0 4px 4px;
+    margin-bottom: 0;
+  }
+
+  .prophet-section { animation-delay: calc(var(--pi) * 0.06s); opacity: 0; }
 </style>
 </head>
 <body>
@@ -638,6 +704,41 @@ function showTopic(key) {
 function renderResults(matched) {
   document.getElementById('noResults').style.display = 'none';
   document.getElementById('resultsSection').style.display = 'block';
+  const list = document.getElementById('resultsList');
+
+  // Check if prophet section
+  if (matched.length === 1 && matched[0][1].isProphetSection) {
+    const topic = matched[0][1];
+    const totalAyaat = topic.prophets.reduce((s, p) => s + p.ayaat.length, 0);
+    document.getElementById('resultsTitle').textContent = 'The 25 Prophets';
+    document.getElementById('resultsCount').textContent = `25 prophets · ${totalAyaat} ayaat`;
+
+    list.innerHTML = topic.prophets.map((prophet, pi) => `
+      <div class="prophet-section stagger" style="--pi:${pi}; --i:${pi}">
+        <div class="prophet-header">
+          <div class="prophet-number">${prophet.number}</div>
+          <div class="prophet-name-block">
+            <div class="prophet-name-en">${prophet.name}</div>
+            <div class="prophet-name-ar">${prophet.arabic_name}</div>
+          </div>
+        </div>
+        <div class="prophet-ayaat">
+          ${prophet.ayaat.map(a => `
+            <div class="aya-card">
+              <div class="aya-arabic">${a.arabic}</div>
+              <div class="aya-translation">"${a.translation}"</div>
+              <div class="aya-ref">
+                <span class="surah-name">${a.surah}</span>
+                <span>·</span>
+                <span>${a.verse}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+    return;
+  }
 
   const allAyaat = matched.flatMap(([key, topic]) =>
     topic.ayaat.map(a => ({ ...a, topic: topic.label, key }))
@@ -647,7 +748,6 @@ function renderResults(matched) {
     matched.length === 1 ? matched[0][1].label : 'Results';
   document.getElementById('resultsCount').textContent = `${allAyaat.length} ayaat`;
 
-  const list = document.getElementById('resultsList');
   list.innerHTML = allAyaat.map((a, i) => `
     <div class="aya-card stagger" style="--i:${i}">
       <div class="aya-arabic">${a.arabic}</div>
