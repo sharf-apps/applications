@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ayah Search — Quran by Topic</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Sans+Malayalam:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #13191f;
+  --bg3: #1a2130;
+  --gold: #f5c842;
+  --gold-dim: rgba(245,200,66,0.12);
+  --teal: #2dd4bf;
+  --teal-dim: rgba(45,212,191,0.15);
+  --teal-glow: rgba(45,212,191,0.06);
+  --text: #e8edf2;
+  --text2: #8fa3b3;
+  --text3: #4a5f70;
+  --border: rgba(45,212,191,0.12);
+  --border2: rgba(255,255,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Lora',serif;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 600px 400px at 80% 20%,rgba(45,212,191,0.04) 0%,transparent 70%),radial-gradient(ellipse 400px 400px at 20% 80%,rgba(245,200,66,0.03) 0%,transparent 70%);pointer-events:none;z-index:0;}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(13,17,23,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:14px;}
+.back-btn{display:flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:7px 14px;color:var(--text2);font-family:'Lora',serif;font-size:0.7rem;cursor:pointer;transition:all 0.15s;text-decoration:none;white-space:nowrap;}
+.back-btn:hover{border-color:var(--teal);color:var(--teal);}
+.topbar-title{font-family:'Amiri',serif;font-size:1.3rem;color:var(--gold);}
+.topbar-sub{font-size:0.6rem;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;}
+
+/* HERO */
+.hero{position:relative;z-index:1;text-align:center;padding:40px 20px 30px;}
+.hero-ar{font-family:'Amiri',serif;font-size:2.5rem;color:var(--gold);text-shadow:0 0 40px rgba(245,200,66,0.2);margin-bottom:8px;}
+.hero-en{font-size:0.75rem;color:var(--text3);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:24px;}
+
+/* SEARCH BOX */
+.search-section{position:relative;z-index:1;max-width:600px;margin:0 auto;padding:0 20px 30px;}
+.search-wrap{display:flex;gap:10px;margin-bottom:16px;}
+.search-input{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 18px;color:var(--text);font-family:'Lora',serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+.search-input:focus{border-color:var(--teal);}
+.search-input::placeholder{color:var(--text3);}
+.search-btn{background:var(--teal-dim);border:1px solid var(--teal);border-radius:10px;padding:14px 22px;color:var(--teal);font-family:'Lora',serif;font-size:0.8rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.search-btn:hover{background:rgba(45,212,191,0.25);}
+
+/* TOPIC TAGS */
+.topics-label{font-size:0.58rem;color:var(--text3);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:10px;}
+.topic-tags{display:flex;flex-wrap:wrap;gap:8px;}
+.tag{padding:7px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;font-size:0.72rem;color:var(--text2);cursor:pointer;transition:all 0.15s;}
+.tag:hover{background:var(--gold-dim);border-color:rgba(245,200,66,0.4);color:var(--gold);}
+.tag.active{background:var(--gold-dim);border-color:rgba(245,200,66,0.5);color:var(--gold);}
+
+/* RESULTS */
+.results-section{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:0 20px 60px;}
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
+.results-title{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal);}
+.results-count{font-size:0.65rem;color:var(--text3);}
+
+/* AYAH CARD */
+.ayah-card{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-bottom:16px;transition:border-color 0.2s;animation:fadeIn 0.3s ease both;}
+.ayah-card:hover{border-color:rgba(245,200,66,0.3);}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ayah-meta{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--bg3);border-bottom:1px solid var(--border2);}
+.ayah-ref{font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:8px;}
+.ayah-ref-badge{width:22px;height:22px;border:1px solid var(--teal-dim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.55rem;background:var(--teal-glow);}
+.ayah-surah-name{font-size:0.62rem;color:var(--text3);}
+.ayah-arabic{padding:18px 18px 12px;font-family:'Amiri',serif;font-size:1.7rem;line-height:2;color:var(--text);text-align:right;direction:rtl;border-bottom:1px solid var(--border2);}
+.ayah-translations{padding:14px 16px 16px;}
+.trans-block{margin-bottom:10px;}
+.trans-block:last-child{margin-bottom:0;}
+.trans-lang{font-size:0.5rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--teal);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.trans-lang::after{content:'';flex:1;height:1px;background:var(--border2);}
+.trans-en{font-family:'Lora',serif;font-size:0.83rem;line-height:1.8;color:var(--text2);font-style:italic;}
+.trans-ml{font-family:'Noto Sans Malayalam',sans-serif;font-size:0.85rem;line-height:1.9;color:var(--text2);}
+
+/* STATES */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-icon{font-size:3rem;margin-bottom:16px;opacity:0.4;}
+.empty-title{font-size:1rem;color:var(--text2);margin-bottom:8px;}
+.empty-sub{font-size:0.75rem;line-height:1.7;}
+.loading-state{text-align:center;padding:60px 20px;color:var(--text3);}
+.loader-ring{width:40px;height:40px;border:2px solid var(--border2);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-state p{font-size:0.67rem;letter-spacing:0.2em;text-transform:uppercase;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="back-btn">← Back</a>
+  <div>
+    <div class="topbar-title">آيات القرآن</div>
+    <div class="topbar-sub">Search by Topic</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-ar">﷽</div>
+  <div class="hero-en">Find Quranic Verses by Topic</div>
+</div>
+
+<div class="search-section">
+  <div class="search-wrap">
+    <input class="search-input" id="searchInput" type="text" placeholder="Search topic... e.g. prayer, fasting, patience" onkeydown="if(event.key==='Enter') doSearch()"/>
+    <button class="search-btn" onclick="doSearch()">Search</button>
+  </div>
+  <div class="topics-label">Popular Topics</div>
+  <div class="topic-tags" id="topicTags"></div>
+</div>
+
+<div class="results-section" id="resultsSection">
+  <div class="empty-state">
+    <div class="empty-icon">🔍</div>
+    <div class="empty-title">Search for a topic</div>
+    <div class="empty-sub">Type a topic above or tap one of the popular tags<br>to find relevant Quranic verses</div>
+  </div>
+</div>
+
+<script>
+// ===================== TOPIC DATABASE =====================
+// Each topic has a list of {surah, ayah} references
+const TOPICS = {
+  "prayer": {
+    label: "🙏 Prayer (Salah)",
+    refs: [
+      {s:2,v:43},{s:2,v:45},{s:2,v:110},{s:2,v:153},{s:2,v:177},{s:2,v:238},
+      {s:4,v:103},{s:11,v:114},{s:17,v:78},{s:20,v:14},{s:23,v:1},{s:23,v:2},
+      {s:23,v:9},{s:29,v:45},{s:70,v:22},{s:70,v:23},{s:87,v:15},{s:108,v:2}
+    ]
+  },
+  "fasting": {
+    label: "🌙 Fasting (Sawm)",
+    refs: [
+      {s:2,v:183},{s:2,v:184},{s:2,v:185},{s:2,v:186},{s:2,v:187},
+      {s:19,v:26},{s:33,v:35}
+    ]
+  },
+  "patience": {
+    label: "⏳ Patience (Sabr)",
+    refs: [
+      {s:2,v:153},{s:2,v:155},{s:2,v:156},{s:2,v:157},{s:2,v:177},{s:3,v:200},
+      {s:8,v:46},{s:10,v:109},{s:13,v:22},{s:16,v:96},{s:16,v:126},{s:39,v:10},
+      {s:40,v:55},{s:46,v:35},{s:103,v:3}
+    ]
+  },
+  "sleeping": {
+    label: "😴 Sleep",
+    refs: [
+      {s:2,v:255},{s:6,v:60},{s:18,v:18},{s:25,v:47},{s:30,v:23},
+      {s:39,v:42},{s:78,v:9}
+    ]
+  },
+  "parents": {
+    label: "👨‍👩‍👧 Parents",
+    refs: [
+      {s:2,v:83},{s:4,v:36},{s:6,v:151},{s:17,v:23},{s:17,v:24},
+      {s:19,v:14},{s:29,v:8},{s:31,v:14},{s:31,v:15},{s:46,v:15}
+    ]
+  },
+  "gratitude": {
+    label: "🤲 Gratitude (Shukr)",
+    refs: [
+      {s:2,v:152},{s:2,v:172},{s:2,v:185},{s:3,v:123},{s:5,v:6},
+      {s:14,v:7},{s:16,v:114},{s:27,v:19},{s:27,v:40},{s:31,v:12},{s:55,v:13}
+    ]
+  },
+  "charity": {
+    label: "💝 Charity (Zakat/Sadaqah)",
+    refs: [
+      {s:2,v:43},{s:2,v:110},{s:2,v:177},{s:2,v:261},{s:2,v:262},{s:2,v:271},
+      {s:3,v:92},{s:9,v:60},{s:57,v:18},{s:63,v:10},{s:64,v:16}
+    ]
+  },
+  "forgiveness": {
+    label: "🕊️ Forgiveness",
+    refs: [
+      {s:2,v:199},{s:3,v:133},{s:3,v:134},{s:3,v:135},{s:4,v:110},
+      {s:7,v:23},{s:12,v:53},{s:39,v:53},{s:42,v:25},{s:66,v:8}
+    ]
+  },
+  "knowledge": {
+    label: "📚 Knowledge (Ilm)",
+    refs: [
+      {s:2,v:31},{s:2,v:32},{s:3,v:18},{s:20,v:114},{s:35,v:28},
+      {s:58,v:11},{s:96,v:1},{s:96,v:2},{s:96,v:3},{s:96,v:4},{s:96,v:5}
+    ]
+  },
+  "death": {
+    label: "💫 Death & Afterlife",
+    refs: [
+      {s:2,v:28},{s:2,v:156},{s:3,v:185},{s:4,v:78},{s:21,v:35},
+      {s:29,v:57},{s:39,v:30},{s:55,v:26},{s:55,v:27},{s:62,v:8}
+    ]
+  },
+  "marriage": {
+    label: "💍 Marriage",
+    refs: [
+      {s:2,v:221},{s:2,v:223},{s:4,v:3},{s:4,v:19},{s:24,v:32},
+      {s:30,v:21},{s:33,v:49},{s:66,v:5}
+    ]
+  },
+  "honesty": {
+    label: "✅ Honesty & Truth",
+    refs: [
+      {s:3,v:17},{s:5,v:119},{s:9,v:119},{s:22,v:30},{s:33,v:70},
+      {s:33,v:71},{s:39,v:33},{s:49,v:15}
+    ]
+  },
+  "quran": {
+    label: "📖 The Quran",
+    refs: [
+      {s:2,v:2},{s:2,v:185},{s:4,v:82},{s:10,v:57},{s:16,v:89},
+      {s:17,v:9},{s:17,v:82},{s:25,v:1},{s:41,v:44},{s:54,v:17},{s:56,v:77},{s:56,v:78},{s:56,v:79}
+    ]
+  },
+  "hope": {
+    label: "🌟 Hope & Mercy",
+    refs: [
+      {s:2,v:218},{s:3,v:132},{s:6,v:54},{s:7,v:56},{s:12,v:87},{s:15,v:49},
+      {s:39,v:53},{s:40,v:3},{s:42,v:25}
+    ]
+  },
+  "food": {
+    label: "🍽️ Food & Halal",
+    refs: [
+      {s:2,v:168},{s:2,v:172},{s:2,v:173},{s:5,v:1},{s:5,v:3},
+      {s:5,v:4},{s:5,v:5},{s:5,v:88},{s:6,v:145},{s:16,v:114}
+    ]
+  },
+  "war": {
+    label: "⚔️ Jihad & Struggle",
+    refs: [
+      {s:2,v:190},{s:2,v:191},{s:2,v:216},{s:3,v:139},{s:4,v:75},
+      {s:8,v:60},{s:9,v:5},{s:22,v:39},{s:22,v:40},{s:29,v:69}
+    ]
+  },
+  "wealth": {
+    label: "💰 Wealth & Spending",
+    refs: [
+      {s:2,v:177},{s:2,v:261},{s:3,v:14},{s:3,v:92},{s:9,v:34},
+      {s:17,v:29},{s:57,v:7},{s:59,v:9},{s:64,v:15},{s:92,v:5},{s:92,v:6}
+    ]
+  },
+  "jannah": {
+    label: "🌴 Paradise (Jannah)",
+    refs: [
+      {s:2,v:25},{s:3,v:133},{s:3,v:136},{s:9,v:72},{s:13,v:23},
+      {s:39,v:20},{s:47,v:15},{s:52,v:17},{s:55,v:46},{s:56,v:15},{s:76,v:5},{s:76,v:6}
+    ]
+  },
+  "hellfire": {
+    label: "🔥 Hellfire (Jahannam)",
+    refs: [
+      {s:2,v:24},{s:3,v:10},{s:3,v:131},{s:4,v:56},{s:14,v:49},
+      {s:18,v:29},{s:40,v:49},{s:66,v:6},{s:74,v:26},{s:74,v:27}
+    ]
+  },
+  "health": {
+    label: "💪 Health & Body",
+    refs: [
+      {s:2,v:195},{s:5,v:6},{s:16,v:69},{s:17,v:82},{s:26,v:80},
+      {s:32,v:7},{s:40,v:64},{s:64,v:3},{s:82,v:6},{s:82,v:7},{s:82,v:8}
+    ]
+  },
+  "prophets": {
+    label: "🌙 Prophets & Messengers",
+    refs: [
+      {s:2,v:136},{s:3,v:84},{s:4,v:163},{s:4,v:164},{s:6,v:84},
+      {s:19,v:51},{s:33,v:40},{s:37,v:123},{s:38,v:48}
+    ]
+  }
+};
+
+const SURAH_NAMES = {
+  1:"Al-Fatihah",2:"Al-Baqarah",3:"Ali 'Imran",4:"An-Nisa",5:"Al-Ma'idah",
+  6:"Al-An'am",7:"Al-A'raf",8:"Al-Anfal",9:"At-Tawbah",10:"Yunus",
+  11:"Hud",12:"Yusuf",13:"Ar-Ra'd",14:"Ibrahim",15:"Al-Hijr",
+  16:"An-Nahl",17:"Al-Isra",18:"Al-Kahf",19:"Maryam",20:"Ta-Ha",
+  21:"Al-Anbiya",22:"Al-Hajj",23:"Al-Mu'minun",24:"An-Nur",25:"Al-Furqan",
+  26:"Ash-Shu'ara",27:"An-Naml",28:"Al-Qasas",29:"Al-'Ankabut",30:"Ar-Rum",
+  31:"Luqman",32:"As-Sajdah",33:"Al-Ahzab",34:"Saba",35:"Fatir",
+  36:"Ya-Sin",37:"As-Saffat",38:"Sad",39:"Az-Zumar",40:"Ghafir",
+  41:"Fussilat",42:"Ash-Shura",43:"Az-Zukhruf",44:"Ad-Dukhan",45:"Al-Jathiyah",
+  46:"Al-Ahqaf",47:"Muhammad",48:"Al-Fath",49:"Al-Hujurat",50:"Qaf",
+  51:"Adh-Dhariyat",52:"At-Tur",53:"An-Najm",54:"Al-Qamar",55:"Ar-Rahman",
+  56:"Al-Waqi'ah",57:"Al-Hadid",58:"Al-Mujadila",59:"Al-Hashr",60:"Al-Mumtahanah",
+  61:"As-Saf",62:"Al-Jumu'ah",63:"Al-Munafiqun",64:"At-Taghabun",65:"At-Talaq",
+  66:"At-Tahrim",67:"Al-Mulk",68:"Al-Qalam",69:"Al-Haqqah",70:"Al-Ma'arij",
+  71:"Nuh",72:"Al-Jinn",73:"Al-Muzzammil",74:"Al-Muddaththir",75:"Al-Qiyamah",
+  76:"Al-Insan",77:"Al-Mursalat",78:"An-Naba",79:"An-Nazi'at",80:"Abasa",
+  81:"At-Takwir",82:"Al-Infitar",83:"Al-Mutaffifin",84:"Al-Inshiqaq",85:"Al-Buruj",
+  86:"At-Tariq",87:"Al-A'la",88:"Al-Ghashiyah",89:"Al-Fajr",90:"Al-Balad",
+  91:"Ash-Shams",92:"Al-Layl",93:"Ad-Duha",94:"Ash-Sharh",95:"At-Tin",
+  96:"Al-'Alaq",97:"Al-Qadr",98:"Al-Bayyinah",99:"Az-Zalzalah",100:"Al-'Adiyat",
+  101:"Al-Qari'ah",102:"At-Takathur",103:"Al-'Asr",104:"Al-Humazah",105:"Al-Fil",
+  106:"Quraysh",107:"Al-Ma'un",108:"Al-Kawthar",109:"Al-Kafirun",110:"An-Nasr",
+  111:"Al-Masad",112:"Al-Ikhlas",113:"Al-Falaq",114:"An-Nas"
+};
+
+// ===================== BUILD TOPIC TAGS =====================
+function buildTags() {
+  const wrap = document.getElementById('topicTags');
+  wrap.innerHTML = Object.keys(TOPICS).map(key => `
+    <span class="tag" onclick="searchTopic('${key}')">${TOPICS[key].label}</span>
+  `).join('');
+}
+
+// ===================== SEARCH =====================
+function doSearch() {
+  const val = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!val) return;
+
+  // Find matching topic key
+  const match = Object.keys(TOPICS).find(k =>
+    k.includes(val) || val.includes(k) || TOPICS[k].label.toLowerCase().includes(val)
+  );
+
+  if (match) {
+    searchTopic(match);
+  } else {
+    document.getElementById('resultsSection').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🤔</div>
+        <div class="empty-title">No topic found for "${val}"</div>
+        <div class="empty-sub">Try: prayer, fasting, patience, sleeping, parents,<br>gratitude, charity, forgiveness, knowledge, marriage,<br>honesty, quran, hope, food, wealth, jannah, health</div>
+      </div>`;
+  }
+}
+
+async function searchTopic(key) {
+  const topic = TOPICS[key];
+  if (!topic) return;
+
+  // Update input & tags
+  document.getElementById('searchInput').value = key;
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tag').forEach(t => {
+    if (t.textContent === topic.label) t.classList.add('active');
+  });
+
+  const section = document.getElementById('resultsSection');
+  section.innerHTML = `<div class="loading-state"><div class="loader-ring"></div><p>Loading verses on ${key}...</p></div>`;
+
+  try {
+    // Fetch all unique surahs needed
+    const surahNums = [...new Set(topic.refs.map(r => r.s))];
+
+    // Fetch Arabic, English, Malayalam for all needed surahs
+    const fetches = surahNums.flatMap(n => [
+      fetch(`https://api.alquran.cloud/v1/surah/${n}/ar.alafasy`).then(r=>r.json()),
+      fetch(`https://api.alquran.cloud/v1/surah/${n}/en.sahih`).then(r=>r.json()),
+      fetch(`https://api.alquran.cloud/v1/surah/${n}/ml.abdulhameed`).then(r=>r.json())
+    ]);
+    const results = await Promise.all(fetches);
+
+    // Build surah data map
+    const surahData = {};
+    for (let i = 0; i < surahNums.length; i++) {
+      const n = surahNums[i];
+      const ar = results[i * 3];
+      const en = results[i * 3 + 1];
+      const ml = results[i * 3 + 2];
+      surahData[n] = {
+        ar: ar.code === 200 ? ar.data.ayahs : [],
+        en: en.code === 200 ? en.data.ayahs : [],
+        ml: ml.code === 200 ? ml.data.ayahs : []
+      };
+    }
+
+    // Build cards
+    const cards = topic.refs.map((ref, idx) => {
+      const d = surahData[ref.s];
+      if (!d || !d.ar[ref.v - 1]) return '';
+      const arText = d.ar[ref.v - 1]?.text || '';
+      const enText = d.en[ref.v - 1]?.text || '';
+      const mlText = d.ml[ref.v - 1]?.text || '';
+
+      return `
+        <div class="ayah-card" style="animation-delay:${idx * 0.04}s">
+          <div class="ayah-meta">
+            <div class="ayah-ref">
+              <div class="ayah-ref-badge">${ref.v}</div>
+              Surah ${ref.s} · Verse ${ref.v}
+            </div>
+            <div class="ayah-surah-name">${SURAH_NAMES[ref.s] || ''}</div>
+          </div>
+          <div class="ayah-arabic">${arText}</div>
+          <div class="ayah-translations">
+            ${enText ? `<div class="trans-block"><div class="trans-lang">English · Sahih International</div><div class="trans-en">${enText}</div></div>` : ''}
+            ${mlText ? `<div class="trans-block"><div class="trans-lang">Malayalam · മലയാളം</div><div class="trans-ml">${mlText}</div></div>` : ''}
+          </div>
+        </div>`;
+    }).join('');
+
+    section.innerHTML = `
+      <div class="results-header">
+        <div class="results-title">${topic.label}</div>
+        <div class="results-count">${topic.refs.length} verses found</div>
+      </div>
+      ${cards}`;
+
+  } catch(e) {
+    section.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">⚠️</div>
+        <div class="empty-title">Failed to load</div>
+        <div class="empty-sub">Check your internet and try again.</div>
+      </div>`;
+  }
+}
+
+// ===================== INIT =====================
+buildTags();
+</script>
+</body>
+</html>
