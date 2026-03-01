@@ -4,319 +4,85 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quran Topic Search</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Noto+Serif+Malayalam:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --gold: #c9a84c;
     --gold-light: #e8c97a;
     --dark: #0d1117;
     --dark2: #161b22;
-    --dark3: #1e2730;
     --text: #e6dcc8;
     --text-muted: #8b9ab0;
     --border: rgba(201,168,76,0.2);
+    --green: #5dbf8f;
+    --green-bg: rgba(76,175,130,0.07);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'Cinzel', serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Background geometric pattern */
+  body { background: var(--dark); color: var(--text); font-family: 'Cinzel', serif; min-height: 100vh; overflow-x: hidden; }
   body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: 
-      radial-gradient(circle at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(201,168,76,0.04) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
+    content: ''; position: fixed; inset: 0;
+    background-image: radial-gradient(circle at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(201,168,76,0.04) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
   }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
-  }
-
-  header {
-    text-align: center;
-    margin-bottom: 50px;
-  }
-
-  .bismillah {
-    font-family: 'Amiri', serif;
-    font-size: 2.2rem;
-    color: var(--gold);
-    margin-bottom: 16px;
-    display: block;
-    letter-spacing: 2px;
-  }
-
-  header h1 {
-    font-size: 2.4rem;
-    font-weight: 600;
-    letter-spacing: 4px;
-    color: var(--text);
-    margin-bottom: 8px;
-    text-transform: uppercase;
-  }
-
-  header p {
-    color: var(--text-muted);
-    font-family: 'Amiri', serif;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-  }
-
-  .divider {
-    width: 200px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 20px auto;
-  }
-
-  /* Search */
-  .search-wrap {
-    position: relative;
-    margin-bottom: 24px;
-  }
-
+  .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+  header { text-align: center; margin-bottom: 50px; }
+  .bismillah { font-family: 'Amiri', serif; font-size: 2.2rem; color: var(--gold); margin-bottom: 16px; display: block; letter-spacing: 2px; }
+  header h1 { font-size: 2.4rem; font-weight: 600; letter-spacing: 4px; color: var(--text); margin-bottom: 8px; text-transform: uppercase; }
+  header p { color: var(--text-muted); font-family: 'Noto Serif Malayalam', serif; font-size: 1rem; }
+  .divider { width: 200px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); margin: 20px auto; }
+  .search-wrap { position: relative; margin-bottom: 24px; }
   .search-wrap input {
-    width: 100%;
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px 20px 16px 52px;
-    color: var(--text);
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    letter-spacing: 2px;
-    outline: none;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    width: 100%; background: var(--dark2); border: 1px solid var(--border); border-radius: 4px;
+    padding: 16px 20px 16px 52px; color: var(--text); font-family: 'Cinzel', serif;
+    font-size: 1rem; letter-spacing: 2px; outline: none; transition: border-color 0.3s, box-shadow 0.3s;
   }
-
-  .search-wrap input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 20px rgba(201,168,76,0.1);
-  }
-
-  .search-wrap input::placeholder {
-    color: var(--text-muted);
-    letter-spacing: 2px;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gold);
-    font-size: 1.1rem;
-  }
-
-  /* Topic pills */
-  .topics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 40px;
-    justify-content: center;
-  }
-
+  .search-wrap input:focus { border-color: var(--gold); box-shadow: 0 0 20px rgba(201,168,76,0.1); }
+  .search-wrap input::placeholder { color: var(--text-muted); letter-spacing: 2px; }
+  .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--gold); font-size: 1.1rem; }
+  .topics { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 40px; justify-content: center; }
   .topic-pill {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 8px 18px;
-    border-radius: 2px;
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: all 0.2s;
+    background: var(--dark2); border: 1px solid var(--border); color: var(--text-muted);
+    padding: 8px 18px; border-radius: 2px; cursor: pointer; font-family: 'Cinzel', serif;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; transition: all 0.2s;
   }
-
-  .topic-pill:hover, .topic-pill.active {
-    background: rgba(201,168,76,0.1);
-    border-color: var(--gold);
-    color: var(--gold);
-  }
-
-  /* Results */
-  .results-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .results-header h2 {
-    font-size: 0.85rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-  }
-
-  .results-count {
-    background: rgba(201,168,76,0.15);
-    color: var(--gold);
-    padding: 3px 10px;
-    border-radius: 2px;
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-  }
-
-  .no-results {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
-    font-family: 'Amiri', serif;
-    font-size: 1.2rem;
-  }
-
-  /* Aya card */
+  .topic-pill:hover, .topic-pill.active { background: rgba(201,168,76,0.1); border-color: var(--gold); color: var(--gold); }
+  .results-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .results-header h2 { font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+  .results-count { background: rgba(201,168,76,0.15); color: var(--gold); padding: 3px 10px; border-radius: 2px; font-size: 0.75rem; letter-spacing: 1px; }
+  .no-results { text-align: center; padding: 60px 20px; color: var(--text-muted); font-family: 'Amiri', serif; font-size: 1.2rem; }
   .aya-card {
-    background: var(--dark2);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--gold);
-    border-radius: 4px;
-    padding: 28px;
-    margin-bottom: 16px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    animation: fadeIn 0.4s ease forwards;
+    background: var(--dark2); border: 1px solid var(--border); border-left: 3px solid var(--gold);
+    border-radius: 4px; padding: 28px; margin-bottom: 16px;
+    transition: transform 0.2s, box-shadow 0.2s; animation: fadeIn 0.4s ease forwards;
   }
-
-  .aya-card:hover {
-    transform: translateX(4px);
-    box-shadow: -4px 0 20px rgba(201,168,76,0.1);
+  .aya-card:hover { transform: translateX(4px); box-shadow: -4px 0 20px rgba(201,168,76,0.1); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .aya-arabic { font-family: 'Amiri', serif; font-size: 1.6rem; color: var(--gold-light); text-align: right; line-height: 2; margin-bottom: 16px; direction: rtl; }
+  .aya-translation { font-family: 'Amiri', serif; font-size: 1.05rem; line-height: 1.8; color: var(--text); margin-bottom: 10px; font-style: italic; }
+  .aya-malayalam {
+    font-family: 'Noto Serif Malayalam', serif; font-size: 0.92rem; line-height: 2;
+    color: var(--green); background: var(--green-bg);
+    border-left: 2px solid rgba(93,191,143,0.35); padding: 8px 14px;
+    margin-bottom: 14px; border-radius: 0 3px 3px 0;
   }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .aya-arabic {
-    font-family: 'Amiri', serif;
-    font-size: 1.6rem;
-    color: var(--gold-light);
-    text-align: right;
-    line-height: 2;
-    margin-bottom: 16px;
-    direction: rtl;
-  }
-
-  .aya-translation {
-    font-family: 'Amiri', serif;
-    font-size: 1.05rem;
-    line-height: 1.8;
-    color: var(--text);
-    margin-bottom: 14px;
-    font-style: italic;
-  }
-
-  .aya-ref {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-  }
-
-  .aya-ref .surah-name {
-    color: var(--gold);
-    font-weight: 600;
-  }
-
-  .aya-tag {
-    background: rgba(201,168,76,0.1);
-    border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold-light);
-    padding: 2px 10px;
-    border-radius: 2px;
-    font-size: 0.7rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
+  .malayalam-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 2px; color: var(--green); opacity: 0.65; display: block; margin-bottom: 4px; text-transform: uppercase; }
+  .aya-ref { display: flex; align-items: center; gap: 12px; font-size: 0.75rem; letter-spacing: 2px; color: var(--text-muted); flex-wrap: wrap; }
+  .aya-ref .surah-name { color: var(--gold); font-weight: 600; }
+  .aya-tag { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); color: var(--gold-light); padding: 2px 10px; border-radius: 2px; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; }
   .stagger { animation-delay: calc(var(--i) * 0.07s); opacity: 0; }
-
-  /* Prophet section styles */
-  .prophet-section {
-    margin-bottom: 32px;
-    animation: fadeIn 0.4s ease forwards;
-  }
-
+  /* Prophet */
+  .prophet-section { margin-bottom: 32px; animation: fadeIn 0.4s ease forwards; animation-delay: calc(var(--pi) * 0.06s); opacity: 0; }
   .prophet-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
+    display: flex; align-items: center; gap: 16px; padding: 16px 20px;
     background: linear-gradient(90deg, rgba(201,168,76,0.12), rgba(201,168,76,0.04));
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--gold);
-    border-radius: 4px 4px 0 0;
-    margin-bottom: 2px;
+    border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: 4px 4px 0 0; margin-bottom: 2px;
   }
-
-  .prophet-number {
-    background: var(--gold);
-    color: var(--dark);
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    letter-spacing: 0;
-  }
-
+  .prophet-number { background: var(--gold); color: var(--dark); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
   .prophet-name-block { flex: 1; }
-
-  .prophet-name-en {
-    font-size: 1rem;
-    letter-spacing: 2px;
-    color: var(--gold-light);
-    font-weight: 600;
-  }
-
-  .prophet-name-ar {
-    font-family: 'Amiri', serif;
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    margin-top: 2px;
-    direction: rtl;
-    text-align: right;
-  }
-
-  .prophet-ayaat { padding-left: 0; }
-
-  .prophet-ayaat .aya-card {
-    border-left: 3px solid rgba(201,168,76,0.4);
-    border-radius: 0;
-    margin-bottom: 2px;
-  }
-
-  .prophet-ayaat .aya-card:last-child {
-    border-radius: 0 0 4px 4px;
-    margin-bottom: 0;
-  }
-
-  .prophet-section { animation-delay: calc(var(--pi) * 0.06s); opacity: 0; }
+  .prophet-name-en { font-size: 1rem; letter-spacing: 2px; color: var(--gold-light); font-weight: 600; }
+  .prophet-name-ar { font-family: 'Amiri', serif; font-size: 1.1rem; color: var(--text-muted); margin-top: 2px; direction: rtl; text-align: right; }
+  .prophet-ayaat .aya-card { border-left: 3px solid rgba(201,168,76,0.4); border-radius: 0; margin-bottom: 2px; }
+  .prophet-ayaat .aya-card:last-child { border-radius: 0 0 4px 4px; margin-bottom: 0; }
 </style>
 </head>
 <body>
@@ -325,17 +91,14 @@
     <span class="bismillah">بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيْمِ</span>
     <div class="divider"></div>
     <h1>Quran Topics</h1>
-    <p>Search for Ayaat by theme and subject</p>
+    <p>വിഷയം തിരയുക — ആയത്തുകൾ കണ്ടെത്തുക</p>
     <div class="divider"></div>
   </header>
-
   <div class="search-wrap">
     <span class="search-icon">⌕</span>
     <input type="text" id="searchInput" placeholder="Search a topic... (prayer, fasting, patience...)" oninput="handleSearch(this.value)">
   </div>
-
   <div class="topics" id="topicPills"></div>
-
   <div id="resultsSection" style="display:none">
     <div class="results-header">
       <h2 id="resultsTitle">Results</h2>
@@ -343,362 +106,233 @@
     </div>
     <div id="resultsList"></div>
   </div>
-
-  <div id="noResults" class="no-results" style="display:none">
-    No ayaat found for this topic.<br>Try: prayer, fasting, patience, gratitude...
-  </div>
+  <div id="noResults" class="no-results" style="display:none">No ayaat found. Try: prayer, fasting, patience, prophet...</div>
 </div>
-
 <script>
 const data = {
-  prayer: {
-    label: "Prayer (Salah)",
-    ayaat: [
-      { arabic: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ وَارْكَعُوا مَعَ الرَّاكِعِينَ", translation: "And establish prayer and give zakah and bow with those who bow [in worship and obedience].", surah: "Al-Baqarah", verse: "2:43" },
-      { arabic: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا", translation: "Indeed, prayer has been decreed upon the believers a decree of specified times.", surah: "An-Nisa", verse: "4:103" },
-      { arabic: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ", translation: "Maintain with care the [obligatory] prayers and [in particular] the middle prayer and stand before Allah, devoutly obedient.", surah: "Al-Baqarah", verse: "2:238" },
-      { arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ ۚ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", translation: "O you who have believed, seek help through patience and prayer. Indeed, Allah is with the patient.", surah: "Al-Baqarah", verse: "2:153" },
-      { arabic: "إِنَّ الصَّلَاةَ تَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ", translation: "Indeed, prayer prohibits immorality and wrongdoing.", surah: "Al-Ankabut", verse: "29:45" },
-      { arabic: "الَّذِينَ هُمْ عَلَىٰ صَلَاتِهِمْ دَائِمُونَ", translation: "Those who are constant in their prayer.", surah: "Al-Ma'arij", verse: "70:23" },
-    ]
-  },
-  fasting: {
-    label: "Fasting (Sawm)",
-    ayaat: [
-      { arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا كُتِبَ عَلَيْكُمُ الصِّيَامُ كَمَا كُتِبَ عَلَى الَّذِينَ مِن قَبْلِكُمْ لَعَلَّكُمْ تَتَّقُونَ", translation: "O you who have believed, decreed upon you is fasting as it was decreed upon those before you that you may become righteous.", surah: "Al-Baqarah", verse: "2:183" },
-      { arabic: "شَهْرُ رَمَضَانَ الَّذِي أُنزِلَ فِيهِ الْقُرْآنُ هُدًى لِّلنَّاسِ", translation: "The month of Ramadhan [is that] in which was revealed the Quran, a guidance for the people.", surah: "Al-Baqarah", verse: "2:185" },
-      { arabic: "وَأَن تَصُومُوا خَيْرٌ لَّكُمْ ۖ إِن كُنتُمْ تَعْلَمُونَ", translation: "But to fast is best for you, if you only knew.", surah: "Al-Baqarah", verse: "2:184" },
-      { arabic: "فَمَن شَهِدَ مِنكُمُ الشَّهْرَ فَلْيَصُمْهُ", translation: "So whoever of you sights [the new moon of] the month, let him fast it.", surah: "Al-Baqarah", verse: "2:185" },
-    ]
-  },
-  quran: {
-    label: "Quran",
-    ayaat: [
-      { arabic: "إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ", translation: "Indeed, it is We who sent down the Quran and indeed, We will be its guardian.", surah: "Al-Hijr", verse: "15:9" },
-      { arabic: "ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ", translation: "This is the Book about which there is no doubt, a guidance for those conscious of Allah.", surah: "Al-Baqarah", verse: "2:2" },
-      { arabic: "إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ", translation: "Indeed, this Quran guides to that which is most suitable.", surah: "Al-Isra", verse: "17:9" },
-      { arabic: "وَنُنَزِّلُ مِنَ الْقُرْآنِ مَا هُوَ شِفَاءٌ وَرَحْمَةٌ لِّلْمُؤْمِنِينَ", translation: "And We send down of the Quran that which is healing and mercy for the believers.", surah: "Al-Isra", verse: "17:82" },
-      { arabic: "أَفَلَا يَتَدَبَّرُونَ الْقُرْآنَ ۚ وَلَوْ كَانَ مِنْ عِندِ غَيْرِ اللَّهِ لَوَجَدُوا فِيهِ اخْتِلَافًا كَثِيرًا", translation: "Then do they not reflect upon the Quran? If it had been from any other than Allah, they would have found within it much contradiction.", surah: "An-Nisa", verse: "4:82" },
-    ]
-  },
-  sleeping: {
-    label: "Sleep & Rest",
-    ayaat: [
-      { arabic: "وَجَعَلْنَا نَوْمَكُمْ سُبَاتًا", translation: "And We made your sleep [a means for] rest.", surah: "An-Naba", verse: "78:9" },
-      { arabic: "وَمِنْ آيَاتِهِ مَنَامُكُم بِاللَّيْلِ وَالنَّهَارِ", translation: "And of His signs is your sleep by night and day and your seeking of His bounty.", surah: "Ar-Rum", verse: "30:23" },
-      { arabic: "اللَّهُ يَتَوَفَّى الْأَنفُسَ حِينَ مَوْتِهَا وَالَّتِي لَمْ تَمُتْ فِي مَنَامِهَا", translation: "Allah takes the souls at the time of their death, and those that do not die [He takes] during their sleep.", surah: "Az-Zumar", verse: "39:42" },
-      { arabic: "وَجَعَلَ اللَّيْلَ سَكَنًا", translation: "And He has made the night for rest.", surah: "Al-An'am", verse: "6:96" },
-    ]
-  },
-  patience: {
-    label: "Patience (Sabr)",
-    ayaat: [
-      { arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", translation: "Indeed, Allah is with the patient.", surah: "Al-Baqarah", verse: "2:153" },
-      { arabic: "وَبَشِّرِ الصَّابِرِينَ", translation: "And give good tidings to the patient.", surah: "Al-Baqarah", verse: "2:155" },
-      { arabic: "إِنَّمَا يُوَفَّى الصَّابِرُونَ أَجْرَهُم بِغَيْرِ حِسَابٍ", translation: "Indeed, the patient will be given their reward without account.", surah: "Az-Zumar", verse: "39:10" },
-      { arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا اصْبِرُوا وَصَابِرُوا", translation: "O you who have believed, persevere and endure and remain stationed.", surah: "Aal-Imran", verse: "3:200" },
-      { arabic: "فَاصْبِرْ صَبْرًا جَمِيلًا", translation: "So be patient with gracious patience.", surah: "Al-Ma'arij", verse: "70:5" },
-    ]
-  },
-  gratitude: {
-    label: "Gratitude (Shukr)",
-    ayaat: [
-      { arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", translation: "If you are grateful, I will surely increase you [in favor].", surah: "Ibrahim", verse: "14:7" },
-      { arabic: "وَاشْكُرُوا لِلَّهِ إِن كُنتُمْ إِيَّاهُ تَعْبُدُونَ", translation: "And be grateful to Allah if it is [indeed] Him that you worship.", surah: "Al-Baqarah", verse: "2:172" },
-      { arabic: "وَقَلِيلٌ مِّنْ عِبَادِيَ الشَّكُورُ", translation: "But few of My servants are grateful.", surah: "Saba", verse: "34:13" },
-      { arabic: "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ", translation: "So remember Me; I will remember you. And be grateful to Me and do not deny Me.", surah: "Al-Baqarah", verse: "2:152" },
-    ]
-  },
-  forgiveness: {
-    label: "Forgiveness",
-    ayaat: [
-      { arabic: "إِنَّ اللَّهَ يَغْفِرُ الذُّنُوبَ جَمِيعًا ۚ إِنَّهُ هُوَ الْغَفُورُ الرَّحِيمُ", translation: "Indeed, Allah forgives all sins. Indeed, it is He who is the Forgiving, the Merciful.", surah: "Az-Zumar", verse: "39:53" },
-      { arabic: "وَاسْتَغْفِرُوا اللَّهَ ۚ إِنَّ اللَّهَ غَفُورٌ رَّحِيمٌ", translation: "And seek forgiveness of Allah. Indeed, Allah is Forgiving and Merciful.", surah: "Al-Baqarah", verse: "2:199" },
-      { arabic: "وَمَن يَعْمَلْ سُوءًا أَوْ يَظْلِمْ نَفْسَهُ ثُمَّ يَسْتَغْفِرِ اللَّهَ يَجِدِ اللَّهَ غَفُورًا رَّحِيمًا", translation: "And whoever does a wrong or wrongs himself but then seeks forgiveness of Allah will find Allah Forgiving and Merciful.", surah: "An-Nisa", verse: "4:110" },
-      { arabic: "وَالَّذِينَ إِذَا فَعَلُوا فَاحِشَةً أَوْ ظَلَمُوا أَنفُسَهُمْ ذَكَرُوا اللَّهَ فَاسْتَغْفَرُوا لِذُنُوبِهِمْ", translation: "And those who, when they commit an immorality or wrong themselves, remember Allah and seek forgiveness for their sins.", surah: "Aal-Imran", verse: "3:135" },
-    ]
-  },
-  charity: {
-    label: "Charity (Zakat)",
-    ayaat: [
-      { arabic: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ", translation: "And establish prayer and give zakah.", surah: "Al-Baqarah", verse: "2:43" },
-      { arabic: "مَّثَلُ الَّذِينَ يُنفِقُونَ أَمْوَالَهُمْ فِي سَبِيلِ اللَّهِ كَمَثَلِ حَبَّةٍ أَنبَتَتْ سَبْعَ سَنَابِلَ", translation: "The example of those who spend their wealth in the way of Allah is like a seed which grows seven spikes.", surah: "Al-Baqarah", verse: "2:261" },
-      { arabic: "لَن تَنَالُوا الْبِرَّ حَتَّىٰ تُنفِقُوا مِمَّا تُحِبُّونَ", translation: "Never will you attain the good [reward] until you spend [in the way of Allah] from that which you love.", surah: "Aal-Imran", verse: "3:92" },
-      { arabic: "وَمَا تُنفِقُوا مِنْ خَيْرٍ فَلِأَنفُسِكُمْ", translation: "And whatever you spend of good - it is for yourselves.", surah: "Al-Baqarah", verse: "2:272" },
-    ]
-  },
-  knowledge: {
-    label: "Knowledge (Ilm)",
-    ayaat: [
-      { arabic: "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ", translation: "Read in the name of your Lord who created.", surah: "Al-Alaq", verse: "96:1" },
-      { arabic: "وَقُل رَّبِّ زِدْنِي عِلْمًا", translation: "And say: My Lord, increase me in knowledge.", surah: "Ta-Ha", verse: "20:114" },
-      { arabic: "يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ", translation: "Allah will raise those who have believed among you and those who were given knowledge, by degrees.", surah: "Al-Mujadila", verse: "58:11" },
-      { arabic: "إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَاءُ", translation: "Only those fear Allah, from among His servants, who have knowledge.", surah: "Fatir", verse: "35:28" },
-    ]
-  },
-  death: {
-    label: "Death & Afterlife",
-    ayaat: [
-      { arabic: "كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ", translation: "Every soul will taste death.", surah: "Aal-Imran", verse: "3:185" },
-      { arabic: "وَمَا الْحَيَاةُ الدُّنْيَا إِلَّا مَتَاعُ الْغُرُورِ", translation: "And what is the worldly life except the enjoyment of delusion.", surah: "Aal-Imran", verse: "3:185" },
-      { arabic: "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ", translation: "Indeed we belong to Allah, and indeed to Him we will return.", surah: "Al-Baqarah", verse: "2:156" },
-      { arabic: "وَمَا خَلَقْتُ الْجِنَّ وَالْإِنسَ إِلَّا لِيَعْبُدُونِ", translation: "And I did not create the jinn and mankind except to worship Me.", surah: "Adh-Dhariyat", verse: "51:56" },
-    ]
-  },
-  trust: {
-    label: "Trust in Allah (Tawakkul)",
-    ayaat: [
-      { arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", translation: "And whoever relies upon Allah - then He is sufficient for him.", surah: "At-Talaq", verse: "65:3" },
-      { arabic: "وَعَلَى اللَّهِ فَتَوَكَّلُوا إِن كُنتُم مُّؤْمِنِينَ", translation: "And upon Allah rely, if you should be believers.", surah: "Al-Ma'idah", verse: "5:23" },
-      { arabic: "إِنَّ اللَّهَ يُحِبُّ الْمُتَوَكِّلِينَ", translation: "Indeed, Allah loves those who rely [upon Him].", surah: "Aal-Imran", verse: "3:159" },
-    ]
-  },
-  marriage: {
-    label: "Marriage",
-    ayaat: [
-      { arabic: "وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا", translation: "And of His signs is that He created for you from yourselves mates that you may find tranquility in them.", surah: "Ar-Rum", verse: "30:21" },
-      { arabic: "هُنَّ لِبَاسٌ لَّكُمْ وَأَنتُمْ لِبَاسٌ لَّهُنَّ", translation: "They are clothing for you and you are clothing for them.", surah: "Al-Baqarah", verse: "2:187" },
-      { arabic: "وَعَاشِرُوهُنَّ بِالْمَعْرُوفِ", translation: "And live with them in kindness.", surah: "An-Nisa", verse: "4:19" },
-    ]
-  },
-  parents: {
-    label: "Parents",
-    ayaat: [
-      { arabic: "وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوا إِلَّا إِيَّاهُ وَبِالْوَالِدَيْنِ إِحْسَانًا", translation: "And your Lord has decreed that you not worship except Him, and to parents, good treatment.", surah: "Al-Isra", verse: "17:23" },
-      { arabic: "وَاخْفِضْ لَهُمَا جَنَاحَ الذُّلِّ مِنَ الرَّحْمَةِ", translation: "And lower to them the wing of humility out of mercy.", surah: "Al-Isra", verse: "17:24" },
-      { arabic: "وَوَصَّيْنَا الْإِنسَانَ بِوَالِدَيْهِ حُسْنًا", translation: "And We have enjoined upon man goodness to parents.", surah: "Al-Ankabut", verse: "29:8" },
-    ]
-  },
-  paradise: {
-    label: "Paradise (Jannah)",
-    ayaat: [
-      { arabic: "وَبَشِّرِ الَّذِين آمَنُوا وَعَمِلُوا الصَّالِحَاتِ أَنَّ لَهُمْ جَنَّاتٍ تَجْرِي مِن تَحْتِهَا الْأَنْهَارُ", translation: "And give good tidings to those who believe and do righteous deeds that they will have gardens beneath which rivers flow.", surah: "Al-Baqarah", verse: "2:25" },
-      { arabic: "فَلَا تَعْلَمُ نَفْسٌ مَّا أُخْفِيَ لَهُم مِّن قُرَّةِ أَعْيُنٍ جَزَاءً بِمَا كَانُوا يَعْمَلُونَ", translation: "No soul knows what has been hidden for them of comfort for eyes as reward for what they used to do.", surah: "As-Sajdah", verse: "32:17" },
-      { arabic: "ادْخُلُوهَا بِسَلَامٍ ذَٰلِكَ يَوْمُ الْخُلُودِ", translation: "Enter it in peace. This is the Day of Eternity.", surah: "Qaf", verse: "50:34" },
-    ]
-  },
+  prayer: { label: "Prayer (Salah)", ayaat: [
+    { arabic: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ وَارْكَعُوا مَعَ الرَّاكِعِينَ", translation: "And establish prayer and give zakah and bow with those who bow in worship.", malayalam: "നിങ്ങൾ നമസ്കാരം നിലനിർത്തുകയും സകാത്ത് നൽകുകയും റുകൂഅ് ചെയ്യുന്നവരോടൊപ്പം റുകൂഅ് ചെയ്യുകയും ചെയ്യുവിൻ.", surah: "Al-Baqarah", verse: "2:43" },
+    { arabic: "إِنَّ الصَّلَاةَ كَانَتْ عَلَى الْمُؤْمِنِينَ كِتَابًا مَّوْقُوتًا", translation: "Indeed, prayer has been decreed upon the believers a decree of specified times.", malayalam: "തീർച്ചയായും നമസ്കാരം സത്യവിശ്വാസികൾക്ക് നിശ്ചിത സമയങ്ങളിൽ നിർബന്ധമാക്കപ്പെട്ടതാകുന്നു.", surah: "An-Nisa", verse: "4:103" },
+    { arabic: "حَافِظُوا عَلَى الصَّلَوَاتِ وَالصَّلَاةِ الْوُسْطَىٰ وَقُومُوا لِلَّهِ قَانِتِينَ", translation: "Maintain with care the obligatory prayers and in particular the middle prayer.", malayalam: "നമസ്കാരങ്ങൾ — പ്രത്യേകിച്ച് മധ്യ നമസ്കാരം — സൂക്ഷ്മതയോടെ കാത്തുസൂക്ഷിക്കുവിൻ.", surah: "Al-Baqarah", verse: "2:238" },
+    { arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ ۚ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", translation: "O you who have believed, seek help through patience and prayer. Indeed, Allah is with the patient.", malayalam: "സത്യവിശ്വാസികളേ, ക്ഷമകൊണ്ടും നമസ്കാരംകൊണ്ടും സഹായം തേടുവിൻ. തീർച്ചയായും അല്ലാഹു ക്ഷമിക്കുന്നവരോടൊപ്പമുണ്ട്.", surah: "Al-Baqarah", verse: "2:153" },
+    { arabic: "إِنَّ الصَّلَاةَ تَنْهَىٰ عَنِ الْفَحْشَاءِ وَالْمُنكَرِ", translation: "Indeed, prayer prohibits immorality and wrongdoing.", malayalam: "തീർച്ചയായും നമസ്കാരം നീചകൃത്യങ്ങളിൽ നിന്നും തിന്മകളിൽ നിന്നും തടയുന്നു.", surah: "Al-Ankabut", verse: "29:45" },
+    { arabic: "الَّذِينَ هُمْ عَلَىٰ صَلَاتِهِمْ دَائِمُونَ", translation: "Those who are constant in their prayer.", malayalam: "അവർ തങ്ങളുടെ നമസ്കാരത്തിൽ നിരന്തരം ഉറ്റുനിൽക്കുന്നവരാണ്.", surah: "Al-Ma'arij", verse: "70:23" },
+  ]},
+  fasting: { label: "Fasting (Sawm)", ayaat: [
+    { arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا كُتِبَ عَلَيْكُمُ الصِّيَامُ كَمَا كُتِبَ عَلَى الَّذِينَ مِن قَبْلِكُمْ لَعَلَّكُمْ تَتَّقُونَ", translation: "O you who have believed, decreed upon you is fasting as it was decreed upon those before you that you may become righteous.", malayalam: "സത്യവിശ്വാസികളേ, നിങ്ങൾക്ക് മുൻപുള്ളവർക്ക് നിർബന്ധമാക്കപ്പെട്ടതുപോലെ നോമ്പ് നിർബന്ധമാക്കപ്പെട്ടിരിക്കുന്നു — നിങ്ങൾ ദൈവഭക്തരാകാൻ.", surah: "Al-Baqarah", verse: "2:183" },
+    { arabic: "شَهْرُ رَمَضَانَ الَّذِي أُنزِلَ فِيهِ الْقُرْآنُ هُدًى لِّلنَّاسِ", translation: "The month of Ramadhan in which was revealed the Quran, a guidance for the people.", malayalam: "റമദാൻ മാസം — അതിലാണ് മനുഷ്യർക്ക് മാർഗദർശനമായ ഖുർആൻ അവതരിപ്പിക്കപ്പെട്ടത്.", surah: "Al-Baqarah", verse: "2:185" },
+    { arabic: "وَأَن تَصُومُوا خَيْرٌ لَّكُمْ ۖ إِن كُنتُمْ تَعْلَمُونَ", translation: "But to fast is best for you, if you only knew.", malayalam: "നോമ്പ് അനുഷ്ഠിക്കുന്നത് നിങ്ങൾക്ക് ഉത്തമമാണ്, നിങ്ങൾ അറിയുന്നെങ്കിൽ.", surah: "Al-Baqarah", verse: "2:184" },
+    { arabic: "فَمَن شَهِدَ مِنكُمُ الشَّهْرَ فَلْيَصُمْهُ", translation: "So whoever of you sights the new moon of the month, let him fast it.", malayalam: "നിങ്ങളിൽ ആരെങ്കിലും ആ മാസം കണ്ടാൽ അവൻ നോമ്പ് അനുഷ്ഠിക്കട്ടെ.", surah: "Al-Baqarah", verse: "2:185" },
+  ]},
+  quran: { label: "Quran", ayaat: [
+    { arabic: "إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ", translation: "Indeed, it is We who sent down the Quran and indeed, We will be its guardian.", malayalam: "തീർച്ചയായും നാമാണ് ഈ ഉദ്ബോധനം ഇറക്കിയത്; നാം തന്നെ അതിന്റെ സംരക്ഷകനുമാണ്.", surah: "Al-Hijr", verse: "15:9" },
+    { arabic: "ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِّلْمُتَّقِينَ", translation: "This is the Book about which there is no doubt, a guidance for those conscious of Allah.", malayalam: "ഈ ഗ്രന്ഥത്തിൽ യാതൊരു സംശയവുമില്ല; ദൈവഭക്തർക്ക് ഇത് മാർഗദർശനമാണ്.", surah: "Al-Baqarah", verse: "2:2" },
+    { arabic: "إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ", translation: "Indeed, this Quran guides to that which is most suitable.", malayalam: "തീർച്ചയായും ഈ ഖുർആൻ ഏറ്റവും നേരായതിലേക്ക് വഴി കാണിക്കുന്നു.", surah: "Al-Isra", verse: "17:9" },
+    { arabic: "وَنُنَزِّلُ مِنَ الْقُرْآنِ مَا هُوَ شِفَاءٌ وَرَحْمَةٌ لِّلْمُؤْمِنِينَ", translation: "And We send down of the Quran that which is healing and mercy for the believers.", malayalam: "നാം ഖുർആനിൽ നിന്ന് സത്യവിശ്വാസികൾക്ക് രോഗശാന്തിയും കാരുണ്യവുമായതിനെ ഇറക്കുന്നു.", surah: "Al-Isra", verse: "17:82" },
+    { arabic: "أَفَلَا يَتَدَبَّرُونَ الْقُرْآنَ", translation: "Then do they not reflect upon the Quran?", malayalam: "അവർ ഖുർആനിൽ ചിന്തിക്കുന്നില്ലേ?", surah: "An-Nisa", verse: "4:82" },
+  ]},
+  sleeping: { label: "Sleep & Rest", ayaat: [
+    { arabic: "وَجَعَلْنَا نَوْمَكُمْ سُبَاتًا", translation: "And We made your sleep a means for rest.", malayalam: "നിങ്ങളുടെ ഉറക്കത്തെ നാം വിശ്രമമാക്കി.", surah: "An-Naba", verse: "78:9" },
+    { arabic: "وَمِنْ آيَاتِهِ مَنَامُكُم بِاللَّيْلِ وَالنَّهَارِ", translation: "And of His signs is your sleep by night and day.", malayalam: "രാത്രിയിലും പകലിലും നിങ്ങളുടെ ഉറക്കം അവന്റെ ദൃഷ്ടാന്തങ്ങളിൽ ഒന്നാണ്.", surah: "Ar-Rum", verse: "30:23" },
+    { arabic: "اللَّهُ يَتَوَفَّى الْأَنفُسَ حِينَ مَوْتِهَا وَالَّتِي لَمْ تَمُتْ فِي مَنَامِهَا", translation: "Allah takes the souls at the time of their death, and those that do not die He takes during their sleep.", malayalam: "അല്ലാഹു മരണ സമയത്ത് ആത്മാക്കളെ പിടിക്കുന്നു; മരിക്കാത്തവയെ ഉറക്കത്തിൽ ഏറ്റെടുക്കുന്നു.", surah: "Az-Zumar", verse: "39:42" },
+    { arabic: "وَجَعَلَ اللَّيْلَ سَكَنًا", translation: "And He has made the night for rest.", malayalam: "അവൻ രാത്രിയെ വിശ്രമ സമയമാക്കി.", surah: "Al-An'am", verse: "6:96" },
+  ]},
+  patience: { label: "Patience (Sabr)", ayaat: [
+    { arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", translation: "Indeed, Allah is with the patient.", malayalam: "തീർച്ചയായും അല്ലാഹു ക്ഷമിക്കുന്നവരോടൊപ്പമുണ്ട്.", surah: "Al-Baqarah", verse: "2:153" },
+    { arabic: "وَبَشِّرِ الصَّابِرِينَ", translation: "And give good tidings to the patient.", malayalam: "ക്ഷമിക്കുന്നവർക്ക് സന്തോഷവാർത്ത അറിയിക്കുക.", surah: "Al-Baqarah", verse: "2:155" },
+    { arabic: "إِنَّمَا يُوَفَّى الصَّابِرُونَ أَجْرَهُم بِغَيْرِ حِسَابٍ", translation: "Indeed, the patient will be given their reward without account.", malayalam: "ക്ഷമിക്കുന്നവർക്ക് അവരുടെ പ്രതിഫലം കണക്കില്ലാതെ നൽകപ്പെടും.", surah: "Az-Zumar", verse: "39:10" },
+    { arabic: "يَا أَيُّهَا الَّذِينَ آمَنُوا اصْبِرُوا وَصَابِرُوا", translation: "O you who have believed, persevere and endure.", malayalam: "സത്യവിശ്വാസികളേ, ക്ഷമ കൈക്കൊള്ളുവിൻ, ഉറച്ചുനിൽക്കുവിൻ.", surah: "Aal-Imran", verse: "3:200" },
+    { arabic: "فَاصْبِرْ صَبْرًا جَمِيلًا", translation: "So be patient with gracious patience.", malayalam: "അതിനാൽ നല്ല ക്ഷമ കൈക്കൊള്ളുക.", surah: "Al-Ma'arij", verse: "70:5" },
+  ]},
+  gratitude: { label: "Gratitude (Shukr)", ayaat: [
+    { arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", translation: "If you are grateful, I will surely increase you in favor.", malayalam: "നിങ്ങൾ നന്ദി കാണിച്ചാൽ ഞാൻ നിങ്ങൾക്ക് അനുഗ്രഹം വർദ്ധിപ്പിക്കും.", surah: "Ibrahim", verse: "14:7" },
+    { arabic: "وَاشْكُرُوا لِلَّهِ إِن كُنتُمْ إِيَّاهُ تَعْبُدُونَ", translation: "And be grateful to Allah if it is indeed Him that you worship.", malayalam: "നിങ്ങൾ അല്ലാഹുവിനെ ആരാധിക്കുന്നവരാണെങ്കിൽ അവന് നന്ദി കാണിക്കുവിൻ.", surah: "Al-Baqarah", verse: "2:172" },
+    { arabic: "وَقَلِيلٌ مِّنْ عِبَادِيَ الشَّكُورُ", translation: "But few of My servants are grateful.", malayalam: "എന്റെ ദാസന്മാരിൽ നന്ദിയുള്ളവർ കുറവാണ്.", surah: "Saba", verse: "34:13" },
+    { arabic: "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ", translation: "So remember Me; I will remember you. And be grateful to Me and do not deny Me.", malayalam: "നിങ്ങൾ എന്നെ സ്മരിക്കുക; ഞാൻ നിങ്ങളെ സ്മരിക്കും. നന്ദികേടു കാണിക്കാതെ നന്ദി കാണിക്കുക.", surah: "Al-Baqarah", verse: "2:152" },
+  ]},
+  forgiveness: { label: "Forgiveness", ayaat: [
+    { arabic: "إِنَّ اللَّهَ يَغْفِرُ الذُّنُوبَ جَمِيعًا ۚ إِنَّهُ هُوَ الْغَفُورُ الرَّحِيمُ", translation: "Indeed, Allah forgives all sins. Indeed, it is He who is the Forgiving, the Merciful.", malayalam: "തീർച്ചയായും അല്ലാഹു സകല പാപങ്ങളും പൊറുക്കുന്നു; അവൻ ഏറെ പൊറുക്കുന്നവനും കരുണയുള്ളവനുമാണ്.", surah: "Az-Zumar", verse: "39:53" },
+    { arabic: "وَاسْتَغْفِرُوا اللَّهَ ۚ إِنَّ اللَّهَ غَفُورٌ رَّحِيمٌ", translation: "And seek forgiveness of Allah. Indeed, Allah is Forgiving and Merciful.", malayalam: "അല്ലാഹുവോട് പൊറുക്കലിനെ തേടുവിൻ; അവൻ ഏറെ പൊറുക്കുന്നവനും കരുണയുള്ളവനുമാണ്.", surah: "Al-Baqarah", verse: "2:199" },
+    { arabic: "وَمَن يَعْمَلْ سُوءًا أَوْ يَظْلِمْ نَفْسَهُ ثُمَّ يَسْتَغْفِرِ اللَّهَ يَجِدِ اللَّهَ غَفُورًا رَّحِيمًا", translation: "And whoever does a wrong or wrongs himself but then seeks forgiveness of Allah will find Allah Forgiving and Merciful.", malayalam: "ആരെങ്കിലും തിന്മ ചെയ്ത ശേഷം അല്ലാഹുവോട് പൊറുക്കലിനെ തേടിയാൽ അല്ലാഹുവെ ഏറെ പൊറുക്കുന്നവനും കരുണയുള്ളവനുമായി കണ്ടെത്തും.", surah: "An-Nisa", verse: "4:110" },
+    { arabic: "وَالَّذِينَ إِذَا فَعَلُوا فَاحِشَةً أَوْ ظَلَمُوا أَنفُسَهُمْ ذَكَرُوا اللَّهَ فَاسْتَغْفَرُوا لِذُنُوبِهِمْ", translation: "And those who, when they commit an immorality or wrong themselves, remember Allah and seek forgiveness.", malayalam: "ഏതെങ്കിലും നീചകൃത്യം ചെയ്യുകയോ സ്വദ്രോഹം ചെയ്യുകയോ ചെയ്യുമ്പോൾ അല്ലാഹുവെ ഓർക്കുകയും പൊറുക്കലിനെ തേടുകയും ചെയ്യുന്നവർ.", surah: "Aal-Imran", verse: "3:135" },
+  ]},
+  charity: { label: "Charity (Zakat)", ayaat: [
+    { arabic: "وَأَقِيمُوا الصَّلَاةَ وَآتُوا الزَّكَاةَ", translation: "And establish prayer and give zakah.", malayalam: "നമസ്കാരം നിലനിർത്തുകയും സകാത്ത് നൽകുകയും ചെയ്യുവിൻ.", surah: "Al-Baqarah", verse: "2:43" },
+    { arabic: "مَّثَلُ الَّذِينَ يُنفِقُونَ أَمْوَالَهُمْ فِي سَبِيلِ اللَّهِ كَمَثَلِ حَبَّةٍ أَنبَتَتْ سَبْعَ سَنَابِلَ", translation: "The example of those who spend their wealth in the way of Allah is like a seed which grows seven spikes.", malayalam: "അല്ലാഹുവിന്റെ മാർഗത്തിൽ സ്വത്ത് ചെലവഴിക്കുന്നവരുടെ ഉപമ ഏഴ് കതിരുകൾ ഉൽപ്പാദിപ്പിക്കുന്ന ഒരു ധാന്യ മണി പോലെയാണ്.", surah: "Al-Baqarah", verse: "2:261" },
+    { arabic: "لَن تَنَالُوا الْبِرَّ حَتَّىٰ تُنفِقُوا مِمَّا تُحِبُّونَ", translation: "Never will you attain the good reward until you spend from that which you love.", malayalam: "നിങ്ങൾ ഇഷ്ടപ്പെടുന്നതിൽ നിന്ന് ചെലവഴിക്കും വരെ നിങ്ങൾ നന്മ പ്രാപിക്കുകയില്ല.", surah: "Aal-Imran", verse: "3:92" },
+    { arabic: "وَمَا تُنفِقُوا مِنْ خَيْرٍ فَلِأَنفُسِكُمْ", translation: "And whatever you spend of good - it is for yourselves.", malayalam: "നിങ്ങൾ നല്ലതിൽ നിന്ന് ചെലവഴിക്കുന്നതെന്തും നിങ്ങൾക്ക് തന്നെ ഉപകരിക്കും.", surah: "Al-Baqarah", verse: "2:272" },
+  ]},
+  knowledge: { label: "Knowledge (Ilm)", ayaat: [
+    { arabic: "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ", translation: "Read in the name of your Lord who created.", malayalam: "സൃഷ്ടിച്ച നിന്റെ രക്ഷിതാവിന്റെ നാമത്തിൽ വായിക്കുക.", surah: "Al-Alaq", verse: "96:1" },
+    { arabic: "وَقُل رَّبِّ زِدْنِي عِلْمًا", translation: "And say: My Lord, increase me in knowledge.", malayalam: "പറയുക: എന്റെ രക്ഷിതാവേ, എനിക്ക് അറിവ് വർദ്ധിപ്പിച്ചുതരിക.", surah: "Ta-Ha", verse: "20:114" },
+    { arabic: "يَرْفَعِ اللَّهُ الَّذِينَ آمَنُوا مِنكُمْ وَالَّذِينَ أُوتُوا الْعِلْمَ دَرَجَاتٍ", translation: "Allah will raise those who have believed and those who were given knowledge, by degrees.", malayalam: "വിശ്വസിച്ചവരെയും അറിവ് നൽകപ്പെട്ടവരെയും അല്ലാഹു പദവികൾ ഉയർത്തും.", surah: "Al-Mujadila", verse: "58:11" },
+    { arabic: "إِنَّمَا يَخْشَى اللَّهَ مِنْ عِبَادِهِ الْعُلَمَاءُ", translation: "Only those fear Allah, from among His servants, who have knowledge.", malayalam: "അല്ലാഹുവിന്റെ ദാസന്മാരിൽ അവനെ ഭയക്കുന്നത് അറിവുള്ളവർ മാത്രമാണ്.", surah: "Fatir", verse: "35:28" },
+  ]},
+  death: { label: "Death & Afterlife", ayaat: [
+    { arabic: "كُلُّ نَفْسٍ ذَائِقَةُ الْمَوْتِ", translation: "Every soul will taste death.", malayalam: "എല്ലാ ആത്മാവും മരണം ആസ്വദിക്കേണ്ടതാണ്.", surah: "Aal-Imran", verse: "3:185" },
+    { arabic: "وَمَا الْحَيَاةُ الدُّنْيَا إِلَّا مَتَاعُ الْغُرُورِ", translation: "And what is the worldly life except the enjoyment of delusion.", malayalam: "ഐഹിക ജീവിതം വഞ്ചനയുടെ ആസ്വാദനം മാത്രമാണ്.", surah: "Aal-Imran", verse: "3:185" },
+    { arabic: "إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ", translation: "Indeed we belong to Allah, and indeed to Him we will return.", malayalam: "തീർച്ചയായും നാം അല്ലാഹുവിന്റേതാണ്; അവനിലേക്ക് നാം മടങ്ങേണ്ടവരുമാണ്.", surah: "Al-Baqarah", verse: "2:156" },
+    { arabic: "وَمَا خَلَقْتُ الْجِنَّ وَالْإِنسَ إِلَّا لِيَعْبُدُونِ", translation: "And I did not create the jinn and mankind except to worship Me.", malayalam: "ജിന്നുകളെയും മനുഷ്യരെയും എനിക്ക് ആരാധന ചെയ്യാനല്ലാതെ ഞാൻ സൃഷ്ടിച്ചിട്ടില്ല.", surah: "Adh-Dhariyat", verse: "51:56" },
+  ]},
+  trust: { label: "Trust in Allah (Tawakkul)", ayaat: [
+    { arabic: "وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ", translation: "And whoever relies upon Allah - then He is sufficient for him.", malayalam: "ആർ അല്ലാഹുവിൽ ഭരമേൽപ്പിക്കുന്നുവോ അവന് അല്ലാഹു മതിയാകും.", surah: "At-Talaq", verse: "65:3" },
+    { arabic: "وَعَلَى اللَّهِ فَتَوَكَّلُوا إِن كُنتُم مُّؤْمِنِينَ", translation: "And upon Allah rely, if you should be believers.", malayalam: "നിങ്ങൾ സത്യവിശ്വാസികളാണെങ്കിൽ അല്ലാഹുവിൽ ഭരമേൽപ്പിക്കുവിൻ.", surah: "Al-Ma'idah", verse: "5:23" },
+    { arabic: "إِنَّ اللَّهَ يُحِبُّ الْمُتَوَكِّلِينَ", translation: "Indeed, Allah loves those who rely upon Him.", malayalam: "തീർച്ചയായും അല്ലാഹു ഭരമേൽപ്പിക്കുന്നവരെ ഇഷ്ടപ്പെടുന്നു.", surah: "Aal-Imran", verse: "3:159" },
+  ]},
+  marriage: { label: "Marriage", ayaat: [
+    { arabic: "وَمِنْ آيَاتِهِ أَنْ خَلَقَ لَكُم مِّنْ أَنفُسِكُمْ أَزْوَاجًا لِّتَسْكُنُوا إِلَيْهَا", translation: "And of His signs is that He created for you from yourselves mates that you may find tranquility in them.", malayalam: "നിങ്ങൾക്ക് ശാന്തി ലഭിക്കാൻ നിങ്ങളിൽ നിന്ന് ഇണകളെ സൃഷ്ടിച്ചത് അവന്റെ ദൃഷ്ടാന്തങ്ങളിൽ ഒന്നാണ്.", surah: "Ar-Rum", verse: "30:21" },
+    { arabic: "هُنَّ لِبَاسٌ لَّكُمْ وَأَنتُمْ لِبَاسٌ لَّهُنَّ", translation: "They are clothing for you and you are clothing for them.", malayalam: "അവർ നിങ്ങൾക്ക് വസ്ത്രമാണ്; നിങ്ങൾ അവർക്കും വസ്ത്രമാണ്.", surah: "Al-Baqarah", verse: "2:187" },
+    { arabic: "وَعَاشِرُوهُنَّ بِالْمَعْرُوفِ", translation: "And live with them in kindness.", malayalam: "അവരുമായി സദ്‌വർത്തനത്തോടെ ജീവിക്കുവിൻ.", surah: "An-Nisa", verse: "4:19" },
+  ]},
+  parents: { label: "Parents", ayaat: [
+    { arabic: "وَقَضَىٰ رَبُّكَ أَلَّا تَعْبُدُوا إِلَّا إِيَّاهُ وَبِالْوَالِدَيْنِ إِحْسَانًا", translation: "And your Lord has decreed that you not worship except Him, and to parents, good treatment.", malayalam: "നിന്റെ രക്ഷിതാവ് വിധിച്ചു: അവനല്ലാതെ ആരാധിക്കരുത്; മാതാപിതാക്കൾക്ക് നന്മ ചെയ്യണം.", surah: "Al-Isra", verse: "17:23" },
+    { arabic: "وَاخْفِضْ لَهُمَا جَنَاحَ الذُّلِّ مِنَ الرَّحْمَةِ", translation: "And lower to them the wing of humility out of mercy.", malayalam: "കരുണയോടെ അവർക്ക് വിനയത്തിന്റെ ചിറക് നനക്കുക.", surah: "Al-Isra", verse: "17:24" },
+    { arabic: "وَوَصَّيْنَا الْإِنسَانَ بِوَالِدَيْهِ حُسْنًا", translation: "And We have enjoined upon man goodness to parents.", malayalam: "മനുഷ്യന് മാതാപിതാക്കൾക്ക് നന്മ ചെയ്യാൻ നാം ഉദ്ബോധിപ്പിച്ചിരിക്കുന്നു.", surah: "Al-Ankabut", verse: "29:8" },
+  ]},
+  paradise: { label: "Paradise (Jannah)", ayaat: [
+    { arabic: "وَبَشِّرِ الَّذِين آمَنُوا وَعَمِلُوا الصَّالِحَاتِ أَنَّ لَهُمْ جَنَّاتٍ تَجْرِي مِن تَحْتِهَا الْأَنْهَارُ", translation: "And give good tidings to those who believe and do righteous deeds that they will have gardens beneath which rivers flow.", malayalam: "വിശ്വസിക്കുകയും സൽകർമ്മങ്ങൾ ചെയ്യുകയും ചെയ്തവർക്ക് അടിയിലൂടെ നദികൾ ഒഴുകുന്ന സ്വർഗ്ഗ വനങ്ങളുണ്ടെന്ന് സന്തോഷവാർത്ത അറിയിക്കുക.", surah: "Al-Baqarah", verse: "2:25" },
+    { arabic: "فَلَا تَعْلَمُ نَفْسٌ مَّا أُخْفِيَ لَهُم مِّن قُرَّةِ أَعْيُنٍ", translation: "No soul knows what has been hidden for them of comfort for eyes as reward for what they used to do.", malayalam: "അവർ ചെയ്തതിന്റെ പ്രതിഫലമായി കരുതിവെക്കപ്പെട്ട നേത്ര സൗഖ്യം ഏത് ആത്മാവിനും അറിയില്ല.", surah: "As-Sajdah", verse: "32:17" },
+    { arabic: "ادْخُلُوهَا بِسَلَامٍ ذَٰلِكَ يَوْمُ الْخُلُودِ", translation: "Enter it in peace. This is the Day of Eternity.", malayalam: "സമാധാനത്തോടെ അതിൽ പ്രവേശിക്കുവിൻ; ഇതാണ് നിത്യതയുടെ ദിനം.", surah: "Qaf", verse: "50:34" },
+  ]},
   prophet: {
-    label: "The 25 Prophets",
-    isProphetSection: true,
+    label: "The 25 Prophets", isProphetSection: true,
     prophets: [
-      {
-        number: 1, name: "Adam (آدم)", arabic_name: "آدَمُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَإِذْ قَالَ رَبُّكَ لِلْمَلَائِكَةِ إِنِّي جَاعِلٌ فِي الْأَرْضِ خَلِيفَةً", translation: "And [mention] when your Lord said to the angels, 'Indeed, I will make upon the earth a successive authority.'", surah: "Al-Baqarah", verse: "2:30" },
-          { arabic: "وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا", translation: "And He taught Adam the names of all things.", surah: "Al-Baqarah", verse: "2:31" },
-        ]
-      },
-      {
-        number: 2, name: "Idris (إدريس)", arabic_name: "إِدْرِيسُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَاذْكُرْ فِي الْكِتَابِ إِدْرِيسَ ۚ إِنَّهُ كَانَ صِدِّيقًا نَّبِيًّا", translation: "And mention in the Book, Idris. Indeed, he was a man of truth and a prophet.", surah: "Maryam", verse: "19:56" },
-          { arabic: "وَرَفَعْنَاهُ مَكَانًا عَلِيًّا", translation: "And We raised him to a high station.", surah: "Maryam", verse: "19:57" },
-        ]
-      },
-      {
-        number: 3, name: "Nuh (نوح)", arabic_name: "نُوحُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "إِنَّا أَرْسَلْنَا نُوحًا إِلَىٰ قَوْمِهِ أَنْ أَنذِرْ قَوْمَكَ مِن قَبْلِ أَن يَأْتِيَهُمْ عَذَابٌ أَلِيمٌ", translation: "Indeed, We sent Noah to his people, [saying], 'Warn your people before there comes to them a painful punishment.'", surah: "Nuh", verse: "71:1" },
-          { arabic: "سَلَامٌ عَلَىٰ نُوحٍ فِي الْعَالَمِينَ", translation: "Peace upon Noah among the worlds.", surah: "As-Saffat", verse: "37:79" },
-        ]
-      },
-      {
-        number: 4, name: "Hud (هود)", arabic_name: "هُودُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَإِلَىٰ عَادٍ أَخَاهُمْ هُودًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ مَا لَكُم مِّنْ إِلَٰهٍ غَيْرُهُ", translation: "And to the people of 'Aad [We sent] their brother Hud. He said, 'O my people, worship Allah; you have no deity other than Him.'", surah: "Al-A'raf", verse: "7:65" },
-        ]
-      },
-      {
-        number: 5, name: "Salih (صالح)", arabic_name: "صَالِحُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَإِلَىٰ ثَمُودَ أَخَاهُمْ صَالِحًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ", translation: "And to the Thamud [We sent] their brother Salih. He said, 'O my people, worship Allah.'", surah: "Al-A'raf", verse: "7:73" },
-        ]
-      },
-      {
-        number: 6, name: "Ibrahim (إبراهيم)", arabic_name: "إِبْرَاهِيمُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَاتَّخَذَ اللَّهُ إِبْرَاهِيمَ خَلِيلًا", translation: "And Allah took Ibrahim as an intimate friend.", surah: "An-Nisa", verse: "4:125" },
-          { arabic: "إِنَّ إِبْرَاهِيمَ كَانَ أُمَّةً قَانِتًا لِّلَّهِ حَنِيفًا", translation: "Indeed, Ibrahim was a [comprehensive] leader, devoutly obedient to Allah, inclining toward truth.", surah: "An-Nahl", verse: "16:120" },
-        ]
-      },
-      {
-        number: 7, name: "Lut (لوط)", arabic_name: "لُوطُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَلُوطًا آتَيْنَاهُ حُكْمًا وَعِلْمًا", translation: "And to Lut We gave judgment and knowledge.", surah: "Al-Anbiya", verse: "21:74" },
-        ]
-      },
-      {
-        number: 8, name: "Ismail (إسماعيل)", arabic_name: "إِسْمَاعِيلُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَاذْكُرْ فِي الْكِتَابِ إِسْمَاعِيلَ ۚ إِنَّهُ كَانَ صَادِقَ الْوَعْدِ وَكَانَ رَسُولًا نَّبِيًّا", translation: "And mention in the Book, Ismail. Indeed, he was true to his promise, and was a messenger and prophet.", surah: "Maryam", verse: "19:54" },
-        ]
-      },
-      {
-        number: 9, name: "Ishaq (إسحاق)", arabic_name: "إِسْحَاقُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَوَهَبْنَا لَهُ إِسْحَاقَ وَيَعْقُوبَ ۚ كُلًّا هَدَيْنَا", translation: "And We gave him Isaac and Jacob — each of them We guided.", surah: "Al-An'am", verse: "6:84" },
-        ]
-      },
-      {
-        number: 10, name: "Yaqub (يعقوب)", arabic_name: "يَعْقُوبُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "أَمْ كُنتُمْ شُهَدَاءَ إِذْ حَضَرَ يَعْقُوبَ الْمَوْتُ", translation: "Or were you witnesses when death approached Jacob?", surah: "Al-Baqarah", verse: "2:133" },
-        ]
-      },
-      {
-        number: 11, name: "Yusuf (يوسف)", arabic_name: "يُوسُفُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "لَّقَدْ كَانَ فِي يُوسُفَ وَإِخْوَتِهِ آيَاتٌ لِّلسَّائِلِينَ", translation: "Certainly were there in Joseph and his brothers signs for those who ask.", surah: "Yusuf", verse: "12:7" },
-          { arabic: "إِنَّهُ مَن يَتَّقِ وَيَصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", translation: "Indeed, he who fears Allah and is patient — then indeed Allah does not allow to be lost the reward of those who do good.", surah: "Yusuf", verse: "12:90" },
-        ]
-      },
-      {
-        number: 12, name: "Shuaib (شعيب)", arabic_name: "شُعَيْبُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَإِلَىٰ مَدْيَنَ أَخَاهُمْ شُعَيْبًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ", translation: "And to Madyan [We sent] their brother Shuaib. He said, 'O my people, worship Allah.'", surah: "Al-A'raf", verse: "7:85" },
-        ]
-      },
-      {
-        number: 13, name: "Ayyub (أيوب)", arabic_name: "أَيُّوبُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَأَيُّوبَ إِذْ نَادَىٰ رَبَّهُ أَنِّي مَسَّنِيَ الضُّرُّ وَأَنتَ أَرْحَمُ الرَّاحِمِينَ", translation: "And [mention] Job, when he called to his Lord, 'Indeed, adversity has touched me, and you are the Most Merciful of the merciful.'", surah: "Al-Anbiya", verse: "21:83" },
-        ]
-      },
-      {
-        number: 14, name: "Dhul-Kifl (ذو الكفل)", arabic_name: "ذُو الْكِفْلِ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَإِسْمَاعِيلَ وَإِدْرِيسَ وَذَا الْكِفْلِ ۖ كُلٌّ مِّنَ الصَّابِرِينَ", translation: "And Ismail and Idris and Dhul-Kifl — all were of the patient.", surah: "Al-Anbiya", verse: "21:85" },
-        ]
-      },
-      {
-        number: 15, name: "Musa (موسى)", arabic_name: "مُوسَى عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَكَلَّمَ اللَّهُ مُوسَىٰ تَكْلِيمًا", translation: "And to Moses Allah spoke directly.", surah: "An-Nisa", verse: "4:164" },
-          { arabic: "إِنِّي أَنَا اللَّهُ لَا إِلَٰهَ إِلَّا أَنَا فَاعْبُدْنِي وَأَقِمِ الصَّلَاةَ لِذِكْرِي", translation: "Indeed, I am Allah. There is no deity except Me, so worship Me and establish prayer for My remembrance.", surah: "Ta-Ha", verse: "20:14" },
-        ]
-      },
-      {
-        number: 16, name: "Harun (هارون)", arabic_name: "هَارُونُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَوَهَبْنَا لَهُ مِن رَّحْمَتِنَا أَخَاهُ هَارُونَ نَبِيًّا", translation: "And We gave him out of Our mercy his brother Aaron as a prophet.", surah: "Maryam", verse: "19:53" },
-        ]
-      },
-      {
-        number: 17, name: "Dawud (داود)", arabic_name: "دَاوُودُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَآتَيْنَا دَاوُودَ زَبُورًا", translation: "And to David We gave the Psalms.", surah: "An-Nisa", verse: "4:163" },
-          { arabic: "وَقَتَلَ دَاوُودُ جَالُوتَ وَآتَاهُ اللَّهُ الْمُلْكَ وَالْحِكْمَةَ", translation: "And David killed Goliath, and Allah gave him the kingship and prophethood and taught him from that which He willed.", surah: "Al-Baqarah", verse: "2:251" },
-        ]
-      },
-      {
-        number: 18, name: "Sulaiman (سليمان)", arabic_name: "سُلَيْمَانُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَوَرِثَ سُلَيْمَانُ دَاوُودَ ۖ وَقَالَ يَا أَيُّهَا النَّاسُ عُلِّمْنَا مَنطِقَ الطَّيْرِ", translation: "And Solomon inherited David. He said, 'O people, we have been taught the language of birds.'", surah: "An-Naml", verse: "27:16" },
-        ]
-      },
-      {
-        number: 19, name: "Ilyas (إلياس)", arabic_name: "إِلْيَاسُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَإِنَّ إِلْيَاسَ لَمِنَ الْمُرْسَلِينَ", translation: "And indeed, Ilyas was among the messengers.", surah: "As-Saffat", verse: "37:123" },
-        ]
-      },
-      {
-        number: 20, name: "Al-Yasa (اليسع)", arabic_name: "الْيَسَعُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "وَإِسْمَاعِيلَ وَالْيَسَعَ وَيُونُسَ وَلُوطًا ۚ وَكُلًّا فَضَّلْنَا عَلَى الْعَالَمِينَ", translation: "And Ismail and Al-Yasa and Yunus and Lut — and all [of them] We preferred over the worlds.", surah: "Al-An'am", verse: "6:86" },
-        ]
-      },
-      {
-        number: 21, name: "Yunus (يونس)", arabic_name: "يُونُسُ عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "فَنَادَىٰ فِي الظُّلُمَاتِ أَن لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ", translation: "And he called out within the darknesses, 'There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.'", surah: "Al-Anbiya", verse: "21:87" },
-        ]
-      },
-      {
-        number: 22, name: "Zakariyya (زكريا)", arabic_name: "زَكَرِيَّا عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "هُنَالِكَ دَعَا زَكَرِيَّا رَبَّهُ ۖ قَالَ رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً", translation: "At that point Zakariyya called upon his Lord, saying, 'My Lord, grant me from Yourself a good offspring.'", surah: "Aal-Imran", verse: "3:38" },
-        ]
-      },
-      {
-        number: 23, name: "Yahya (يحيى)", arabic_name: "يَحْيَى عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "يَا يَحْيَىٰ خُذِ الْكِتَابَ بِقُوَّةٍ ۖ وَآتَيْنَاهُ الْحُكْمَ صَبِيًّا", translation: "O Yahya, take the Scripture with determination. And We gave him judgement [while yet] a boy.", surah: "Maryam", verse: "19:12" },
-        ]
-      },
-      {
-        number: 24, name: "Isa (عيسى)", arabic_name: "عِيسَى عَلَيْهِ السَّلَام",
-        ayaat: [
-          { arabic: "إِنَّ مَثَلَ عِيسَىٰ عِندَ اللَّهِ كَمَثَلِ آدَمَ ۖ خَلَقَهُ مِن تُرَابٍ", translation: "Indeed, the likeness of Jesus to Allah is as the likeness of Adam. He created him from dust.", surah: "Aal-Imran", verse: "3:59" },
-          { arabic: "وَجَعَلْنَا ابْنَ مَرْيَمَ وَأُمَّهُ آيَةً", translation: "And We made the son of Mary and his mother a sign.", surah: "Al-Mu'minun", verse: "23:50" },
-        ]
-      },
-      {
-        number: 25, name: "Muhammad ﷺ", arabic_name: "مُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّم",
-        ayaat: [
-          { arabic: "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ", translation: "And We have not sent you except as a mercy to the worlds.", surah: "Al-Anbiya", verse: "21:107" },
-          { arabic: "وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ", translation: "And indeed, you are of a great moral character.", surah: "Al-Qalam", verse: "68:4" },
-          { arabic: "لَقَدْ كَانَ لَكُمْ فِي رَسُولِ اللَّهِ أُسْوَةٌ حَسَنَةٌ", translation: "There has certainly been for you in the Messenger of Allah an excellent pattern of conduct.", surah: "Al-Ahzab", verse: "33:21" },
-          { arabic: "مُّحَمَّدٌ رَّسُولُ اللَّهِ ۚ وَخَاتَمَ النَّبِيِّينَ", translation: "Muhammad is the Messenger of Allah and the seal of the prophets.", surah: "Al-Ahzab", verse: "33:40" },
-          { arabic: "إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ ۚ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا", translation: "Indeed, Allah confers blessing upon the Prophet, and His angels do so as well. O believers, send blessings upon him and salutations.", surah: "Al-Ahzab", verse: "33:56" },
-        ]
-      },
+      { number:1, name:"Adam (آدم)", arabic_name:"آدَمُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَإِذْ قَالَ رَبُّكَ لِلْمَلَائِكَةِ إِنِّي جَاعِلٌ فِي الْأَرْضِ خَلِيفَةً", translation:"And when your Lord said to the angels, 'Indeed, I will make upon the earth a successive authority.'", malayalam:"നിന്റെ രക്ഷിതാവ് മലക്കുകളോട് പറഞ്ഞ സന്ദർഭം: ഞാൻ ഭൂമിയിൽ ഒരു പ്രതിനിധിയെ നിയോഗിക്കാൻ പോകുന്നു.", surah:"Al-Baqarah", verse:"2:30"},
+        { arabic:"وَعَلَّمَ آدَمَ الْأَسْمَاءَ كُلَّهَا", translation:"And He taught Adam the names of all things.", malayalam:"അവൻ ആദമിന് സകല വസ്തുക്കളുടെ നാമങ്ങളും പഠിപ്പിച്ചു.", surah:"Al-Baqarah", verse:"2:31"},
+      ]},
+      { number:2, name:"Idris (إدريس)", arabic_name:"إِدْرِيسُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَاذْكُرْ فِي الْكِتَابِ إِدْرِيسَ ۚ إِنَّهُ كَانَ صِدِّيقًا نَّبِيًّا", translation:"Mention in the Book, Idris. Indeed, he was a man of truth and a prophet.", malayalam:"വേദഗ്രന്ഥത്തിൽ ഇദ്‌രീസിനെ കുറിച്ച് പ്രസ്താവിക്കുക; അദ്ദേഹം സത്യസന്ധനും പ്രവാചകനുമായിരുന്നു.", surah:"Maryam", verse:"19:56"},
+        { arabic:"وَرَفَعْنَاهُ مَكَانًا عَلِيًّا", translation:"And We raised him to a high station.", malayalam:"അദ്ദേഹത്തെ നാം ഉന്നത പദവിയിലേക്ക് ഉയർത്തി.", surah:"Maryam", verse:"19:57"},
+      ]},
+      { number:3, name:"Nuh (نوح)", arabic_name:"نُوحُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"إِنَّا أَرْسَلْنَا نُوحًا إِلَىٰ قَوْمِهِ أَنْ أَنذِرْ قَوْمَكَ مِن قَبْلِ أَن يَأْتِيَهُمْ عَذَابٌ أَلِيمٌ", translation:"Indeed, We sent Noah to his people: 'Warn your people before there comes a painful punishment.'", malayalam:"തീർച്ചയായും നൂഹിനെ അദ്ദേഹത്തിന്റെ ജനതയിലേക്ക് നാം അയച്ചു: നിന്റെ ജനതക്ക് വേദനയേറിയ ശിക്ഷ വരുന്നതിന് മുൻപ് മുന്നറിയിപ്പ് നൽക.", surah:"Nuh", verse:"71:1"},
+        { arabic:"سَلَامٌ عَلَىٰ نُوحٍ فِي الْعَالَمِينَ", translation:"Peace upon Noah among the worlds.", malayalam:"ലോകരിൽ നൂഹിന് സലാം.", surah:"As-Saffat", verse:"37:79"},
+      ]},
+      { number:4, name:"Hud (هود)", arabic_name:"هُودُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَإِلَىٰ عَادٍ أَخَاهُمْ هُودًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ مَا لَكُم مِّنْ إِلَٰهٍ غَيْرُهُ", translation:"And to 'Aad their brother Hud. He said, 'O my people, worship Allah; you have no deity other than Him.'", malayalam:"ആദ് ജനതയിലേക്ക് ഹൂദ്: എന്റെ ജനമേ, അല്ലാഹുവിനെ ആരാധിക്കുവിൻ; അവനല്ലാതെ ആരാധ്യൻ ഇല്ല.", surah:"Al-A'raf", verse:"7:65"},
+      ]},
+      { number:5, name:"Salih (صالح)", arabic_name:"صَالِحُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَإِلَىٰ ثَمُودَ أَخَاهُمْ صَالِحًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ", translation:"And to the Thamud their brother Salih. He said, 'O my people, worship Allah.'", malayalam:"സമൂദ് ജനതയിലേക്ക് സ്വാലിഹ്: എന്റെ ജനമേ, അല്ലാഹുവിനെ ആരാധിക്കുവിൻ.", surah:"Al-A'raf", verse:"7:73"},
+      ]},
+      { number:6, name:"Ibrahim (إبراهيم)", arabic_name:"إِبْرَاهِيمُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَاتَّخَذَ اللَّهُ إِبْرَاهِيمَ خَلِيلًا", translation:"And Allah took Ibrahim as an intimate friend.", malayalam:"അല്ലാഹു ഇബ്‌റാഹീമിനെ ഉറ്റ മിത്രമായി സ്വീകരിച്ചു.", surah:"An-Nisa", verse:"4:125"},
+        { arabic:"إِنَّ إِبْرَاهِيمَ كَانَ أُمَّةً قَانِتًا لِّلَّهِ حَنِيفًا", translation:"Indeed, Ibrahim was a comprehensive leader, devoutly obedient to Allah, inclining toward truth.", malayalam:"ഇബ്‌റാഹീം ഒരു ഉമ്മത്ത് ആയിരുന്നു; അല്ലാഹുവിന് പൂർണ്ണ അനുസരണക്കാരനും ഏക ദൈവ വിശ്വാസിയും.", surah:"An-Nahl", verse:"16:120"},
+      ]},
+      { number:7, name:"Lut (لوط)", arabic_name:"لُوطُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَلُوطًا آتَيْنَاهُ حُكْمًا وَعِلْمًا", translation:"And to Lut We gave judgment and knowledge.", malayalam:"ലൂത്വിന് നാം വിധിജ്ഞാനവും അറിവും നൽകി.", surah:"Al-Anbiya", verse:"21:74"},
+      ]},
+      { number:8, name:"Ismail (إسماعيل)", arabic_name:"إِسْمَاعِيلُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَاذْكُرْ فِي الْكِتَابِ إِسْمَاعِيلَ ۚ إِنَّهُ كَانَ صَادِقَ الْوَعْدِ وَكَانَ رَسُولًا نَّبِيًّا", translation:"Mention in the Book, Ismail. Indeed, he was true to his promise, and was a messenger and prophet.", malayalam:"ഇസ്‌മാഈൽ വാഗ്ദത്ത നിർവ്വഹണത്തിൽ സത്യനിഷ്ഠ പുലർത്തിയ ദൂതനും പ്രവാചകനുമായിരുന്നു.", surah:"Maryam", verse:"19:54"},
+      ]},
+      { number:9, name:"Ishaq (إسحاق)", arabic_name:"إِسْحَاقُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَوَهَبْنَا لَهُ إِسْحَاقَ وَيَعْقُوبَ ۚ كُلًّا هَدَيْنَا", translation:"And We gave him Isaac and Jacob — each of them We guided.", malayalam:"അദ്ദേഹത്തിന് ഇസ്ഹാഖിനെയും യഅ്ഖൂബിനെയും നൽകി; ഇരുവർക്കും മാർഗദർശനം നൽകി.", surah:"Al-An'am", verse:"6:84"},
+      ]},
+      { number:10, name:"Yaqub (يعقوب)", arabic_name:"يَعْقُوبُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"أَمْ كُنتُمْ شُهَدَاءَ إِذْ حَضَرَ يَعْقُوبَ الْمَوْتُ", translation:"Or were you witnesses when death approached Jacob?", malayalam:"യഅ്ഖൂബിന് മരണം ആസന്നമായപ്പോൾ നിങ്ങൾ അവിടെ ഉണ്ടായിരുന്നോ?", surah:"Al-Baqarah", verse:"2:133"},
+      ]},
+      { number:11, name:"Yusuf (يوسف)", arabic_name:"يُوسُفُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"لَّقَدْ كَانَ فِي يُوسُفَ وَإِخْوَتِهِ آيَاتٌ لِّلسَّائِلِينَ", translation:"Certainly were there in Joseph and his brothers signs for those who ask.", malayalam:"യൂസുഫിലും അദ്ദേഹത്തിന്റെ സഹോദരങ്ങളിലും ചോദ്യം ചെയ്യുന്നവർക്ക് ദൃഷ്ടാന്തങ്ങളുണ്ട്.", surah:"Yusuf", verse:"12:7"},
+        { arabic:"إِنَّهُ مَن يَتَّقِ وَيَصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", translation:"Indeed, he who fears Allah and is patient — Allah does not allow to be lost the reward of those who do good.", malayalam:"ദൈവഭക്തിയോടെ ക്ഷമ കൈക്കൊള്ളുന്നവരുടെ പ്രതിഫലം അല്ലാഹു നഷ്ടപ്പെടുത്തില്ല.", surah:"Yusuf", verse:"12:90"},
+      ]},
+      { number:12, name:"Shuaib (شعيب)", arabic_name:"شُعَيْبُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَإِلَىٰ مَدْيَنَ أَخَاهُمْ شُعَيْبًا ۚ قَالَ يَا قَوْمِ اعْبُدُوا اللَّهَ", translation:"And to Madyan their brother Shuaib. He said, 'O my people, worship Allah.'", malayalam:"മദ്‌യൻ ജനതയിലേക്ക് ശുഐബ്: എന്റെ ജനമേ, അല്ലാഹുവിനെ ആരാധിക്കുവിൻ.", surah:"Al-A'raf", verse:"7:85"},
+      ]},
+      { number:13, name:"Ayyub (أيوب)", arabic_name:"أَيُّوبُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَأَيُّوبَ إِذْ نَادَىٰ رَبَّهُ أَنِّي مَسَّنِيَ الضُّرُّ وَأَنتَ أَرْحَمُ الرَّاحِمِينَ", translation:"And Job, when he called to his Lord, 'Indeed, adversity has touched me, and you are the Most Merciful.'", malayalam:"അയ്യൂബ് പ്രാർത്ഥിച്ചു: എനിക്ക് ദുരിതം ബാധിച്ചിരിക്കുന്നു; നീ ഏറ്റവും കരുണ ചൊരിയുന്നവനാണ്.", surah:"Al-Anbiya", verse:"21:83"},
+      ]},
+      { number:14, name:"Dhul-Kifl (ذو الكفل)", arabic_name:"ذُو الْكِفْلِ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَإِسْمَاعِيلَ وَإِدْرِيسَ وَذَا الْكِفْلِ ۖ كُلٌّ مِّنَ الصَّابِرِينَ", translation:"And Ismail and Idris and Dhul-Kifl — all were of the patient.", malayalam:"ഇസ്‌മാഈലും ഇദ്‌രീസും ദുൽ-കിഫ്‌ലും — ഇവരെല്ലാം ക്ഷമിക്കുന്നവരിൽ ഉൾപ്പെട്ടവരായിരുന്നു.", surah:"Al-Anbiya", verse:"21:85"},
+      ]},
+      { number:15, name:"Musa (موسى)", arabic_name:"مُوسَى عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَكَلَّمَ اللَّهُ مُوسَىٰ تَكْلِيمًا", translation:"And to Moses Allah spoke directly.", malayalam:"മൂസായോട് അല്ലാഹു നേരിട്ട് സംസാരിച്ചു.", surah:"An-Nisa", verse:"4:164"},
+        { arabic:"إِنِّي أَنَا اللَّهُ لَا إِلَٰهَ إِلَّا أَنَا فَاعْبُدْنِي وَأَقِمِ الصَّلَاةَ لِذِكْرِي", translation:"Indeed, I am Allah. There is no deity except Me, so worship Me and establish prayer for My remembrance.", malayalam:"ഞാൻ അല്ലാഹുവാണ്; എനിക്കല്ലാതെ ആരാധ്യൻ ഇല്ല. എന്നെ ആരാധിക്കുക; എന്നെ ഓർക്കാൻ നമസ്കാരം നിലനിർത്തുക.", surah:"Ta-Ha", verse:"20:14"},
+      ]},
+      { number:16, name:"Harun (هارون)", arabic_name:"هَارُونُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَوَهَبْنَا لَهُ مِن رَّحْمَتِنَا أَخَاهُ هَارُونَ نَبِيًّا", translation:"And We gave him out of Our mercy his brother Aaron as a prophet.", malayalam:"നമ്മുടെ കാരുണ്യത്തിൽ നിന്ന് അദ്ദേഹത്തിന്റെ സഹോദരൻ ഹാറൂനിനെ പ്രവാചകനായി നൽകി.", surah:"Maryam", verse:"19:53"},
+      ]},
+      { number:17, name:"Dawud (داود)", arabic_name:"دَاوُودُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَآتَيْنَا دَاوُودَ زَبُورًا", translation:"And to David We gave the Psalms.", malayalam:"ദാവൂദിന് നാം സബൂർ നൽകി.", surah:"An-Nisa", verse:"4:163"},
+        { arabic:"وَقَتَلَ دَاوُودُ جَالُوتَ وَآتَاهُ اللَّهُ الْمُلْكَ وَالْحِكْمَةَ", translation:"And David killed Goliath, and Allah gave him the kingship and wisdom.", malayalam:"ദാവൂദ് ജാലൂത്തിനെ വധിച്ചു; അല്ലാഹു അദ്ദേഹത്തിന് ഭരണാധികാരവും ജ്ഞാനവും നൽകി.", surah:"Al-Baqarah", verse:"2:251"},
+      ]},
+      { number:18, name:"Sulaiman (سليمان)", arabic_name:"سُلَيْمَانُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَوَرِثَ سُلَيْمَانُ دَاوُودَ ۖ وَقَالَ يَا أَيُّهَا النَّاسُ عُلِّمْنَا مَنطِقَ الطَّيْرِ", translation:"And Solomon inherited David. He said, 'O people, we have been taught the language of birds.'", malayalam:"സുലൈമാൻ ദാവൂദിന്റെ അനന്തരാവകാശിയായി. ജനങ്ങളേ, നമ്മെ പക്ഷികളുടെ ഭാഷ പഠിപ്പിച്ചിരിക്കുന്നു.", surah:"An-Naml", verse:"27:16"},
+      ]},
+      { number:19, name:"Ilyas (إلياس)", arabic_name:"إِلْيَاسُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَإِنَّ إِلْيَاسَ لَمِنَ الْمُرْسَلِينَ", translation:"And indeed, Ilyas was among the messengers.", malayalam:"തീർച്ചയായും ഇൽയാസ് ദൂതന്മാരിൽ ഒരാളായിരുന്നു.", surah:"As-Saffat", verse:"37:123"},
+      ]},
+      { number:20, name:"Al-Yasa (اليسع)", arabic_name:"الْيَسَعُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"وَإِسْمَاعِيلَ وَالْيَسَعَ وَيُونُسَ وَلُوطًا ۚ وَكُلًّا فَضَّلْنَا عَلَى الْعَالَمِينَ", translation:"And Ismail and Al-Yasa and Yunus and Lut — and all of them We preferred over the worlds.", malayalam:"ഇസ്‌മാഈലിനെയും അൽ-യസഇനെയും യൂനുസിനെയും ലൂത്വിനെയും — ഇവരെ നാം ലോകർക്കുമേൽ ശ്രേഷ്ഠരാക്കി.", surah:"Al-An'am", verse:"6:86"},
+      ]},
+      { number:21, name:"Yunus (يونس)", arabic_name:"يُونُسُ عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"فَنَادَىٰ فِي الظُّلُمَاتِ أَن لَّا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ", translation:"And he called out within the darknesses, 'There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers.'", malayalam:"ഇരുട്ടുകൾക്കിടയിൽ നിന്ന് വിളിച്ചു: നീ അല്ലാതെ ആരാധ്യൻ ഇല്ല; നീ പരിശുദ്ധൻ; ഞാൻ അക്രമികളിൽ ഒരുവൻ.", surah:"Al-Anbiya", verse:"21:87"},
+      ]},
+      { number:22, name:"Zakariyya (زكريا)", arabic_name:"زَكَرِيَّا عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"هُنَالِكَ دَعَا زَكَرِيَّا رَبَّهُ ۖ قَالَ رَبِّ هَبْ لِي مِن لَّدُنكَ ذُرِّيَّةً طَيِّبَةً", translation:"At that point Zakariyya called upon his Lord: 'My Lord, grant me from Yourself a good offspring.'", malayalam:"സകരിയ്യ പ്രാർത്ഥിച്ചു: എന്റെ രക്ഷിതാവേ, നിന്റെ അടുത്ത് നിന്ന് ഒരു നല്ല സന്തതിയെ പ്രദാനം ചെയ്യേണമേ.", surah:"Aal-Imran", verse:"3:38"},
+      ]},
+      { number:23, name:"Yahya (يحيى)", arabic_name:"يَحْيَى عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"يَا يَحْيَىٰ خُذِ الْكِتَابَ بِقُوَّةٍ ۖ وَآتَيْنَاهُ الْحُكْمَ صَبِيًّا", translation:"O Yahya, take the Scripture with determination. And We gave him judgement while yet a boy.", malayalam:"യഹ്‌യാ, ഗ്രന്ഥം ശക്തിമത്തായി ഗ്രഹിക്കുക. ബാല്യത്തിൽ തന്നെ നാം ജ്ഞാനം നൽകി.", surah:"Maryam", verse:"19:12"},
+      ]},
+      { number:24, name:"Isa (عيسى)", arabic_name:"عِيسَى عَلَيْهِ السَّلَام", ayaat:[
+        { arabic:"إِنَّ مَثَلَ عِيسَىٰ عِندَ اللَّهِ كَمَثَلِ آدَمَ ۖ خَلَقَهُ مِن تُرَابٍ", translation:"Indeed, the likeness of Jesus to Allah is as the likeness of Adam. He created him from dust.", malayalam:"അല്ലാഹുവിന്റെ അടുത്ത് ഈസായുടെ ഉപമ ആദമിന്റെ ഉപമ പോലെ; മണ്ണിൽ നിന്ന് സൃഷ്ടിച്ചു.", surah:"Aal-Imran", verse:"3:59"},
+        { arabic:"وَجَعَلْنَا ابْنَ مَرْيَمَ وَأُمَّهُ آيَةً", translation:"And We made the son of Mary and his mother a sign.", malayalam:"മർയമിന്റെ പുത്രനെയും അദ്ദേഹത്തിന്റെ മാതാവിനെയും നാം ഒരു ദൃഷ്ടാന്തമാക്കി.", surah:"Al-Mu'minun", verse:"23:50"},
+      ]},
+      { number:25, name:"Muhammad ﷺ", arabic_name:"مُحَمَّدٌ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّم", ayaat:[
+        { arabic:"وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ", translation:"And We have not sent you except as a mercy to the worlds.", malayalam:"ലോകർക്ക് കാരുണ്യമായല്ലാതെ നിന്നെ നാം അയച്ചിട്ടില്ല.", surah:"Al-Anbiya", verse:"21:107"},
+        { arabic:"وَإِنَّكَ لَعَلَىٰ خُلُقٍ عَظِيمٍ", translation:"And indeed, you are of a great moral character.", malayalam:"തീർച്ചയായും നീ മഹത്തായ സ്വഭാവ ഔന്നത്യത്തിലാണ്.", surah:"Al-Qalam", verse:"68:4"},
+        { arabic:"لَقَدْ كَانَ لَكُمْ فِي رَسُولِ اللَّهِ أُسْوَةٌ حَسَنَةٌ", translation:"There has certainly been for you in the Messenger of Allah an excellent pattern of conduct.", malayalam:"അല്ലാഹുവിന്റെ ദൂതനിൽ നിങ്ങൾക്ക് ഉത്തമ മാതൃകയുണ്ട്.", surah:"Al-Ahzab", verse:"33:21"},
+        { arabic:"مُّحَمَّدٌ رَّسُولُ اللَّهِ ۚ وَخَاتَمَ النَّبِيِّينَ", translation:"Muhammad is the Messenger of Allah and the seal of the prophets.", malayalam:"മുഹമ്മദ് അല്ലാഹുവിന്റെ ദൂതനും പ്രവാചകന്മാരുടെ മുദ്രയുമാണ്.", surah:"Al-Ahzab", verse:"33:40"},
+        { arabic:"إِنَّ اللَّهَ وَمَلَائِكَتَهُ يُصَلُّونَ عَلَى النَّبِيِّ ۚ يَا أَيُّهَا الَّذِينَ آمَنُوا صَلُّوا عَلَيْهِ وَسَلِّمُوا تَسْلِيمًا", translation:"Indeed, Allah confers blessing upon the Prophet, and His angels do so as well. O believers, send blessings upon him and salutations.", malayalam:"അല്ലാഹുവും മലക്കുകളും നബിയുടെ മേൽ അനുഗ്രഹം ചൊരിയുന്നു. വിശ്വാസികളേ, സ്വലാത്ത് ചൊല്ലി സലാം പറയുക.", surah:"Al-Ahzab", verse:"33:56"},
+      ]},
     ]
   },
 };
 
-// Synonyms / keyword map
 const synonyms = {
-  salah: 'prayer', salat: 'prayer', pray: 'prayer',
-  sawm: 'fasting', ramadan: 'fasting', ramadhan: 'fasting', fast: 'fasting',
-  sabr: 'patience', patient: 'patience',
-  shukr: 'gratitude', thankful: 'gratitude', thanks: 'gratitude', grateful: 'gratitude',
-  zakat: 'charity', sadaqah: 'charity', donate: 'charity', giving: 'charity',
-  ilm: 'knowledge', learn: 'knowledge', education: 'knowledge',
-  sleep: 'sleeping', rest: 'sleeping', night: 'sleeping',
-  tawakkul: 'trust', rely: 'trust', reliance: 'trust', tawakal: 'trust',
-  muhammad: 'prophet', nabi: 'prophet', rasul: 'prophet', messenger: 'prophet', pbuh: 'prophet', saw: 'prophet',
-  nikah: 'marriage', wife: 'marriage', husband: 'marriage', spouse: 'marriage',
-  mother: 'parents', father: 'parents', parent: 'parents',
-  jannah: 'paradise', heaven: 'paradise', hereafter: 'paradise', afterlife: 'death',
-  death: 'death', die: 'death', akhirah: 'death',
-  forgive: 'forgiveness', istighfar: 'forgiveness', repent: 'forgiveness', tawbah: 'forgiveness',
+  salah:'prayer', salat:'prayer', pray:'prayer',
+  sawm:'fasting', ramadan:'fasting', ramadhan:'fasting', fast:'fasting',
+  sabr:'patience', patient:'patience',
+  shukr:'gratitude', thankful:'gratitude', thanks:'gratitude', grateful:'gratitude',
+  zakat:'charity', sadaqah:'charity', donate:'charity', giving:'charity',
+  ilm:'knowledge', learn:'knowledge', education:'knowledge',
+  sleep:'sleeping', rest:'sleeping',
+  tawakkul:'trust', rely:'trust', tawakal:'trust',
+  muhammad:'prophet', nabi:'prophet', rasul:'prophet', messenger:'prophet', pbuh:'prophet', saw:'prophet',
+  nikah:'marriage', wife:'marriage', husband:'marriage', spouse:'marriage',
+  mother:'parents', father:'parents', parent:'parents',
+  jannah:'paradise', heaven:'paradise',
+  death:'death', die:'death', akhirah:'death', afterlife:'death',
+  forgive:'forgiveness', istighfar:'forgiveness', repent:'forgiveness', tawbah:'forgiveness',
 };
 
-function normalizeQuery(q) {
-  const lower = q.toLowerCase().trim();
-  return synonyms[lower] || lower;
-}
-
-function findTopics(query) {
-  const norm = normalizeQuery(query);
-  return Object.entries(data).filter(([key]) => key.includes(norm) || norm.includes(key));
-}
+function normalizeQuery(q) { const l = q.toLowerCase().trim(); return synonyms[l] || l; }
+function findTopics(query) { const n = normalizeQuery(query); return Object.entries(data).filter(([k]) => k.includes(n) || n.includes(k)); }
 
 function handleSearch(value) {
   const input = value.trim();
   document.querySelectorAll('.topic-pill').forEach(p => p.classList.remove('active'));
-
-  if (!input) {
-    document.getElementById('resultsSection').style.display = 'none';
-    document.getElementById('noResults').style.display = 'none';
-    return;
-  }
+  if (!input) { document.getElementById('resultsSection').style.display='none'; document.getElementById('noResults').style.display='none'; return; }
   const matched = findTopics(input);
-  if (matched.length === 0) {
-    document.getElementById('resultsSection').style.display = 'none';
-    document.getElementById('noResults').style.display = 'block';
-    return;
-  }
+  if (matched.length === 0) { document.getElementById('resultsSection').style.display='none'; document.getElementById('noResults').style.display='block'; return; }
   renderResults(matched);
 }
 
 function showTopic(key) {
   document.getElementById('searchInput').value = key;
-  document.querySelectorAll('.topic-pill').forEach(p => {
-    p.classList.toggle('active', p.dataset.key === key);
-  });
+  document.querySelectorAll('.topic-pill').forEach(p => p.classList.toggle('active', p.dataset.key === key));
   renderResults([[key, data[key]]]);
+}
+
+function cardHTML(a, i, showTag) {
+  return `<div class="aya-card stagger" style="--i:${i}">
+    <div class="aya-arabic">${a.arabic}</div>
+    <div class="aya-translation">"${a.translation}"</div>
+    <div class="aya-malayalam"><span class="malayalam-label">മലയാളം</span>${a.malayalam}</div>
+    <div class="aya-ref">
+      <span class="surah-name">${a.surah}</span><span>·</span><span>${a.verse}</span>
+      ${showTag && a.topic ? `<span class="aya-tag">${a.topic}</span>` : ''}
+    </div>
+  </div>`;
 }
 
 function renderResults(matched) {
@@ -706,69 +340,42 @@ function renderResults(matched) {
   document.getElementById('resultsSection').style.display = 'block';
   const list = document.getElementById('resultsList');
 
-  // Check if prophet section
   if (matched.length === 1 && matched[0][1].isProphetSection) {
     const topic = matched[0][1];
-    const totalAyaat = topic.prophets.reduce((s, p) => s + p.ayaat.length, 0);
+    const total = topic.prophets.reduce((s,p)=>s+p.ayaat.length,0);
     document.getElementById('resultsTitle').textContent = 'The 25 Prophets';
-    document.getElementById('resultsCount').textContent = `25 prophets · ${totalAyaat} ayaat`;
-
-    list.innerHTML = topic.prophets.map((prophet, pi) => `
-      <div class="prophet-section stagger" style="--pi:${pi}; --i:${pi}">
+    document.getElementById('resultsCount').textContent = `25 prophets · ${total} ayaat`;
+    list.innerHTML = topic.prophets.map((p,pi) => `
+      <div class="prophet-section" style="--pi:${pi}">
         <div class="prophet-header">
-          <div class="prophet-number">${prophet.number}</div>
+          <div class="prophet-number">${p.number}</div>
           <div class="prophet-name-block">
-            <div class="prophet-name-en">${prophet.name}</div>
-            <div class="prophet-name-ar">${prophet.arabic_name}</div>
+            <div class="prophet-name-en">${p.name}</div>
+            <div class="prophet-name-ar">${p.arabic_name}</div>
           </div>
         </div>
-        <div class="prophet-ayaat">
-          ${prophet.ayaat.map(a => `
-            <div class="aya-card">
-              <div class="aya-arabic">${a.arabic}</div>
-              <div class="aya-translation">"${a.translation}"</div>
-              <div class="aya-ref">
-                <span class="surah-name">${a.surah}</span>
-                <span>·</span>
-                <span>${a.verse}</span>
-              </div>
-            </div>
-          `).join('')}
+        <div class="prophet-ayaat">${p.ayaat.map((a,i)=>`
+          <div class="aya-card">
+            <div class="aya-arabic">${a.arabic}</div>
+            <div class="aya-translation">"${a.translation}"</div>
+            <div class="aya-malayalam"><span class="malayalam-label">മലയാളം</span>${a.malayalam}</div>
+            <div class="aya-ref"><span class="surah-name">${a.surah}</span><span>·</span><span>${a.verse}</span></div>
+          </div>`).join('')}
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
     return;
   }
 
-  const allAyaat = matched.flatMap(([key, topic]) =>
-    topic.ayaat.map(a => ({ ...a, topic: topic.label, key }))
-  );
-
-  document.getElementById('resultsTitle').textContent =
-    matched.length === 1 ? matched[0][1].label : 'Results';
-  document.getElementById('resultsCount').textContent = `${allAyaat.length} ayaat`;
-
-  list.innerHTML = allAyaat.map((a, i) => `
-    <div class="aya-card stagger" style="--i:${i}">
-      <div class="aya-arabic">${a.arabic}</div>
-      <div class="aya-translation">"${a.translation}"</div>
-      <div class="aya-ref">
-        <span class="surah-name">${a.surah}</span>
-        <span>·</span>
-        <span>${a.verse}</span>
-        <span class="aya-tag">${a.topic}</span>
-      </div>
-    </div>
-  `).join('');
+  const all = matched.flatMap(([k,t])=>t.ayaat.map(a=>({...a,topic:t.label})));
+  document.getElementById('resultsTitle').textContent = matched.length===1 ? matched[0][1].label : 'Results';
+  document.getElementById('resultsCount').textContent = `${all.length} ayaat`;
+  list.innerHTML = all.map((a,i)=>cardHTML(a,i,true)).join('');
 }
 
-// Render topic pills
 const pillsContainer = document.getElementById('topicPills');
-Object.entries(data).forEach(([key, topic]) => {
+Object.entries(data).forEach(([key,topic]) => {
   const btn = document.createElement('button');
-  btn.className = 'topic-pill';
-  btn.dataset.key = key;
-  btn.textContent = topic.label;
+  btn.className = 'topic-pill'; btn.dataset.key = key; btn.textContent = topic.label;
   btn.onclick = () => showTopic(key);
   pillsContainer.appendChild(btn);
 });
