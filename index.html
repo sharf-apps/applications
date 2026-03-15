@@ -11,7 +11,7 @@
 
     body {
       min-height: 100vh;
-      background: #0d1117;
+      background: #080810;
       font-family: 'DM Mono', monospace;
       display: flex;
       flex-direction: column;
@@ -21,62 +21,102 @@
       position: relative;
     }
 
-    body::before, body::after {
-      content: '';
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(90px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    body::before {
-      width: 380px; height: 380px;
-      background: rgba(45,212,191,0.07);
-      top: -80px; right: -80px;
-    }
-    body::after {
-      width: 300px; height: 300px;
-      background: rgba(201,168,76,0.06);
-      bottom: -60px; left: -60px;
+    /* ANIMATED GRADIENT BG */
+    .bg-canvas {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 20% 50%, #1a0533 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 20%, #0d2240 0%, transparent 50%),
+                  radial-gradient(ellipse at 60% 80%, #1a1a00 0%, transparent 50%),
+                  #080810;
     }
 
-    .grid-bg {
-      position: fixed; inset: 0; z-index: 0; opacity: 0.025; pointer-events: none;
+    /* FLOATING ORBS */
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px);
+      pointer-events: none; z-index: 0; animation: floatOrb 12s ease-in-out infinite;
+    }
+    .orb1 { width: 450px; height: 450px; background: rgba(139,92,246,0.18); top: -120px; left: -80px; animation-delay: 0s; }
+    .orb2 { width: 350px; height: 350px; background: rgba(236,72,153,0.12); top: 30%; right: -100px; animation-delay: -4s; }
+    .orb3 { width: 300px; height: 300px; background: rgba(6,182,212,0.10); bottom: -80px; left: 20%; animation-delay: -8s; }
+    .orb4 { width: 200px; height: 200px; background: rgba(245,158,11,0.10); bottom: 20%; right: 10%; animation-delay: -2s; }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -40px) scale(1.08); }
+      66% { transform: translate(-20px, 30px) scale(0.94); }
+    }
+
+    /* NOISE GRAIN */
+    .noise {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* STAR DOTS */
+    .stars {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(45,212,191,1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(45,212,191,1) 1px, transparent 1px);
-      background-size: 48px 48px;
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 55%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 25%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 5%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 40%, rgba(255,255,255,0.5) 0%, transparent 100%);
     }
 
     .main-card {
       position: relative; z-index: 1;
-      background: #13191f;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 20px;
+      background: rgba(12, 8, 24, 0.75);
+      border: 1px solid rgba(139,92,246,0.25);
+      border-radius: 24px;
       padding: 52px 40px 44px;
       width: 92%; max-width: 400px;
       text-align: center;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 32px 80px rgba(0,0,0,0.6), 0 0 60px rgba(139,92,246,0.08);
+      backdrop-filter: blur(20px);
+      animation: cardIn 0.6s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes cardIn { from { opacity:0; transform:translateY(24px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+
+    /* Glowing top border */
+    .main-card::before {
+      content: '';
+      position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.7), rgba(236,72,153,0.5), rgba(6,182,212,0.5), transparent);
+      border-radius: 1px;
     }
 
-    .brand-icon { font-size: 2.8rem; line-height: 1; margin-bottom: 14px; display: block; }
+    .brand-icon {
+      font-size: 2.8rem; line-height: 1; margin-bottom: 14px; display: block;
+      filter: drop-shadow(0 0 16px rgba(139,92,246,0.6));
+      animation: iconPulse 3s ease-in-out infinite;
+    }
+    @keyframes iconPulse { 0%,100%{filter:drop-shadow(0 0 16px rgba(139,92,246,0.6))} 50%{filter:drop-shadow(0 0 28px rgba(236,72,153,0.7))} }
 
     .brand-title {
       font-family: 'Playfair Display', serif;
       font-size: 2rem; font-weight: 900;
-      color: #f0e8d5; letter-spacing: 0.02em;
-      line-height: 1.1; margin-bottom: 6px;
+      background: linear-gradient(135deg, #f0e8d5, #c084fc, #38bdf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.02em; line-height: 1.1; margin-bottom: 6px;
     }
 
     .brand-sub {
-      font-size: 0.72rem; color: #4a5f70;
+      font-size: 0.72rem; color: rgba(255,255,255,0.25);
       letter-spacing: 0.2em; text-transform: uppercase;
       margin-bottom: 36px;
     }
 
     .divider {
-      width: 40px; height: 1px;
-      background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(139,92,246,0.6), rgba(236,72,153,0.4), transparent);
       margin: 0 auto 32px;
     }
 
@@ -120,7 +160,7 @@
       border-color: rgba(74,222,128,0.65); color: #86efac;
       box-shadow: 0 0 26px rgba(74,222,128,0.12);
     }
-    .btn-icon { font-size: 1.2rem; }
+.btn-icon { font-size: 1.2rem; }
     .btn-label { flex: 1; text-align: center; }
     .btn-arrow { opacity: 0.4; transition: transform 0.2s, opacity 0.2s; }
     .nav-btn:hover .btn-arrow { transform: translateX(4px); opacity: 1; }
@@ -133,7 +173,13 @@
 </head>
 <body>
 
-  <div class="grid-bg"></div>
+  <div class="bg-canvas"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+  <div class="noise"></div>
+  <div class="stars"></div>
 
   <div class="main-card">
     <span class="brand-icon">✦</span>
@@ -141,7 +187,7 @@
     <div class="brand-sub">Choose your path</div>
     <div class="divider"></div>
 
-    <a href="quran.html" class="nav-btn btn-quran">
+    <a href="quran-app.html" class="nav-btn btn-quran">
       <span class="btn-icon">☾</span>
       <span class="btn-label">Quran</span>
       <span class="btn-arrow">→</span>
@@ -159,7 +205,7 @@
       <span class="btn-arrow">→</span>
     </a>
 
-    <div class="footer-note">tap to open</div>
+<div class="footer-note">tap to open</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
