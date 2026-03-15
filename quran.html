@@ -222,6 +222,30 @@ body::before {
 .retry-btn { margin-top:8px; padding:9px 22px; background:var(--teal-dim); border:1px solid var(--teal); border-radius:6px; color:var(--teal); font-family:var(--ui-font); font-size:0.7rem; cursor:pointer; transition:background 0.15s; }
 .retry-btn:hover { background:rgba(45,212,191,0.25); }
 
+/* WORD POPUP */
+.word-popup {
+  position: fixed; z-index: 9999;
+  background: #1a2130; border: 1px solid rgba(245,200,66,0.4);
+  border-radius: 12px; padding: 16px 18px; min-width: 220px; max-width: 300px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 20px rgba(245,200,66,0.08);
+  animation: popupIn 0.2s cubic-bezier(0.16,1,0.3,1) both;
+  pointer-events: auto;
+}
+@keyframes popupIn { from{opacity:0;transform:scale(0.9) translateY(4px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.popup-word-ar { font-family: 'Amiri', serif; font-size: 1.6rem; color: #f5c842; text-align: center; margin-bottom: 10px; direction: rtl; }
+.popup-divider { height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 10px; }
+.popup-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 7px; }
+.popup-row:last-child { margin-bottom: 0; }
+.popup-flag { font-size: 0.65rem; letter-spacing: 0.1em; color: #2dd4bf; min-width: 22px; padding-top: 1px; }
+.popup-meaning { font-size: 0.8rem; line-height: 1.5; color: #e8edf2; }
+.popup-meaning-ml { font-family: 'Noto Sans Malayalam', sans-serif; font-size: 0.82rem; line-height: 1.6; color: #8fa3b3; }
+.popup-loading { text-align: center; font-size: 0.65rem; color: #4a5f70; letter-spacing: 0.15em; padding: 8px 0; }
+.popup-close { position: absolute; top: 8px; right: 10px; background: none; border: none; color: #4a5f70; font-size: 1rem; cursor: pointer; line-height: 1; }
+.popup-close:hover { color: #e8edf2; }
+.arabic-word { cursor: pointer; border-radius: 4px; padding: 0 2px; transition: background 0.15s, color 0.15s; display: inline-block; }
+.arabic-word:hover { background: rgba(245,200,66,0.15); color: #f5c842; }
+
+
 /* WELCOME */
 .welcome-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:18px; padding:40px; text-align:center; }
 .welcome-arabicbig { font-family:var(--arabic-font); font-size:4rem; color:var(--gold); text-shadow:0 0 60px rgba(245,200,66,0.25); line-height:1.2; }
@@ -592,10 +616,259 @@ function buildVerseCard(av, ev, ml, verseNum, surahNum) {
           </button>
         </div>
       </div>
-      <div class="verse-arabic" id="ar-text-${verseNum}">${av.text}</div>
+      <div class="verse-arabic" id="ar-text-${verseNum}">${wrapArabicWords(av.text, verseNum)}</div>
       ${(showEN || showML) ? `<div class="verse-translations">${enBlock}${mlBlock}</div>` : ''}
     </div>
   `;
+}
+
+
+// ===================== WORD MEANING POPUP =====================
+let popupEl = null;
+let popupTimeout = null;
+
+function wrapArabicWords(text, verseNum) {
+  // Split on spaces, wrap each word in clickable span
+  return text.split(' ').map((word, i) =>
+    `<span class="arabic-word" onclick="showWordMeaning(event, '${word.replace(/'/g, "\'")}', ${verseNum})">${word}</span>`
+  ).join(' ');
+}
+
+async function showWordMeaning(e, word, verseNum) {
+  e.stopPropagation();
+
+  // Remove existing popup
+  if (popupEl) { popupEl.remove(); popupEl = null; }
+
+  // Create popup
+  popupEl = document.createElement('div');
+  popupEl.className = 'word-popup';
+  popupEl.innerHTML = `
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-word-ar">${word}</div>
+    <div class="popup-divider"></div>
+    <div class="popup-loading">Loading meaning...</div>
+  `;
+  document.body.appendChild(popupEl);
+  positionPopup(e, popupEl);
+
+  // Fetch word-by-word data from alquran.cloud
+  try {
+    // Clean the word for search (remove diacritics for better matching)
+    const cleanWord = word.replace(/[ً-ٟؐ-ؚۖ-ۜ]/g, '');
+
+    // Use quran.com word meanings API
+    const surahNum = currentSurah ? currentSurah.n : 1;
+    const res = await fetch(`https://api.alquran.cloud/v1/ayah/${surahNum}:${verseNum}/editions/quran-wordbyword,en.transliteration`);
+    const data = await res.json();
+
+    let enMeaning = '';
+    let transliteration = '';
+
+    if (data.code === 200 && data.data) {
+      const editions = data.data;
+      // Try to match the clicked word position
+      const arEdition = editions.find(e => e.edition && e.edition.identifier === 'quran-wordbyword');
+      const enEdition = editions.find(e => e.edition && e.edition.identifier === 'en.transliteration');
+
+      if (arEdition && arEdition.text) {
+        const words = arEdition.text.split(' ');
+        const clickedIdx = words.findIndex(w => w.replace(/[ً-ٟؐ-ؚۖ-ۜ]/g, '') === cleanWord);
+        if (clickedIdx >= 0 && enEdition) {
+          const enWords = enEdition.text.split(' ');
+          transliteration = enWords[clickedIdx] || '';
+        }
+      }
+    }
+
+    // Fallback: use a simple Arabic word dictionary
+    const meaning = getWordMeaning(cleanWord, word);
+    updatePopup(word, meaning.en, meaning.ml, transliteration);
+
+  } catch(err) {
+    const meaning = getWordMeaning(word.replace(/[ً-ٟؐ-ؚۖ-ۜ]/g, ''), word);
+    updatePopup(word, meaning.en, meaning.ml, '');
+  }
+
+  // Close popup when clicking outside
+  setTimeout(() => {
+    document.addEventListener('click', closePopupOutside, { once: true });
+  }, 100);
+}
+
+function updatePopup(word, en, ml, translit) {
+  if (!popupEl) return;
+  popupEl.innerHTML = `
+    <button class="popup-close" onclick="closePopup()">✕</button>
+    <div class="popup-word-ar">${word}</div>
+    ${translit ? `<div style="text-align:center;font-size:0.65rem;color:#4a5f70;margin-bottom:8px;letter-spacing:0.05em;font-style:italic">${translit}</div>` : ''}
+    <div class="popup-divider"></div>
+    <div class="popup-row">
+      <div class="popup-flag">EN</div>
+      <div class="popup-meaning">${en}</div>
+    </div>
+    <div class="popup-row">
+      <div class="popup-flag">ML</div>
+      <div class="popup-meaning-ml">${ml}</div>
+    </div>
+  `;
+}
+
+function positionPopup(e, popup) {
+  const margin = 12;
+  const x = e.clientX;
+  const y = e.clientY;
+  const pw = 280, ph = 160;
+  const vw = window.innerWidth, vh = window.innerHeight;
+
+  let left = x - pw / 2;
+  let top = y + margin;
+
+  if (left < margin) left = margin;
+  if (left + pw > vw - margin) left = vw - pw - margin;
+  if (top + ph > vh - margin) top = y - ph - margin;
+
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+}
+
+function closePopup() {
+  if (popupEl) { popupEl.remove(); popupEl = null; }
+}
+function closePopupOutside(e) {
+  if (popupEl && !popupEl.contains(e.target)) closePopup();
+}
+
+// ===================== ARABIC WORD DICTIONARY =====================
+function getWordMeaning(clean, original) {
+  const dict = {
+    'الله': { en: 'Allah — God, the One', ml: 'അല്ലാഹു — ദൈവം, ഏകൻ' },
+    'الرحمن': { en: 'Ar-Rahman — The Most Gracious', ml: 'അർ-റഹ്മാൻ — അത്യന്തം കരുണാലു' },
+    'الرحيم': { en: 'Ar-Raheem — The Most Merciful', ml: 'അർ-റഹീം — കൃपालു' },
+    'رب': { en: 'Rabb — Lord, Sustainer', ml: 'റബ്ബ് — നാഥൻ, പരിപാലകൻ' },
+    'العالمين': { en: 'Al-Alameen — All the worlds', ml: 'അൽ-ആലമീൻ — സർവ്വലോകങ്ങൾ' },
+    'مالك': { en: 'Malik — Master, Owner', ml: 'മാലിക് — ഉടമ, അധിപൻ' },
+    'يوم': { en: 'Yawm — Day', ml: 'യൗം — ദിവസം' },
+    'الدين': { en: 'Ad-Deen — The Judgment, The Religion', ml: 'അദ്-ദീൻ — വിചാരണ, മതം' },
+    'نعبد': { en: "Na'budu — We worship", ml: 'നഅ്ബുദ് — ഞങ്ങൾ ആരാധിക്കുന്നു' },
+    'نستعين': { en: "Nasta'een — We seek help", ml: 'നസ്തഈൻ — ഞങ്ങൾ സഹായം തേടുന്നു' },
+    'اهدنا': { en: 'Ihdina — Guide us', ml: 'ഇഹ്ദിന — ഞങ്ങളെ നയിക്കേണമേ' },
+    'الصراط': { en: 'As-Sirat — The path, The way', ml: 'അസ്-സിറാത് — പാത, വഴി' },
+    'المستقيم': { en: 'Al-Mustaqeem — The straight', ml: 'അൽ-മുസ്തഖീം — നേരായ' },
+    'انعمت': { en: "An'amta — You bestowed favor", ml: 'അൻആമ്ത — നീ അനുഗ്രഹിച്ചു' },
+    'عليهم': { en: "'Alayhim — Upon them", ml: 'അലൈഹിം — അവരുടെ മേൽ' },
+    'قل': { en: 'Qul — Say', ml: 'ഖുൽ — പറയുക' },
+    'هو': { en: 'Huwa — He', ml: 'ഹുവ — അവൻ' },
+    'احد': { en: 'Ahad — One, Unique', ml: 'അഹദ് — ഏകൻ, അദ്വിതീയൻ' },
+    'الصمد': { en: 'As-Samad — The Eternal, The Self-Sufficient', ml: 'അസ്-സ്വമദ് — നിരപേക്ഷൻ' },
+    'يلد': { en: 'Yalid — He begets', ml: 'യലിദ് — ജനിപ്പിക്കുന്നു' },
+    'يولد': { en: 'Yoolad — He is begotten', ml: 'യൂലദ് — ജനിക്കുന്നു' },
+    'كفوا': { en: 'Kufuwan — Equal, Comparable', ml: 'കുഫുവൻ — തുല്യൻ' },
+    'بسم': { en: 'Bismi — In the name of', ml: 'ബിസ്മി — നാമത്തിൽ' },
+    'الحمد': { en: 'Al-Hamd — All praise', ml: 'അൽ-ഹംദ് — സ്തുതി' },
+    'لله': { en: 'Lillah — Belongs to Allah', ml: 'ലില്ലാഹ് — അല്ലാഹുവിന്' },
+    'ان': { en: 'Inna — Indeed, Verily', ml: 'ഇന്ന — തീർച്ചയായും' },
+    'اعطينا': { en: "A'tayna — We have given", ml: 'അഅ്ത്വൈനാ — നാം നൽകി' },
+    'الكوثر': { en: 'Al-Kawthar — Abundance, Fountain', ml: 'അൽ-കൗഥർ — സമൃദ്ധി' },
+    'فصل': { en: 'Fasalli — So pray', ml: 'ഫസ്വല്ലി — ആകയാൽ നമസ്കരിക്കുക' },
+    'لربك': { en: 'Li-rabbika — For your Lord', ml: 'ലിറബ്ബിക — നിന്റെ നാഥനു' },
+    'وانحر': { en: "Wan-har — And sacrifice", ml: 'വൻഹർ — ബലി നൽകുക' },
+    'شانئك': { en: "Shani-aka — Your enemy", ml: 'ശാനിഅക — നിന്റെ ശത്രു' },
+    'الابتر': { en: 'Al-Abtar — The one cut off', ml: 'അൽ-അബ്തർ — നിഷ്ഫലൻ' },
+    'والعصر': { en: 'Wal-Asr — By time / the era', ml: 'വൽ-അസ്ർ — കാലത്തിന് സത്യം' },
+    'الانسان': { en: 'Al-Insan — Mankind, Human', ml: 'അൽ-ഇൻസാൻ — മനുഷ്യൻ' },
+    'لفي': { en: 'La-fee — Indeed in', ml: 'ലഫീ — നിശ്ചയം...ൽ' },
+    'خسر': { en: 'Khusr — Loss', ml: 'ഖുസ്ർ — നഷ്ടം' },
+    'امنوا': { en: 'Amanu — Those who believe', ml: 'ആമനൂ — വിശ്വസിച്ചവർ' },
+    'الصالحات': { en: 'As-Salihat — Righteous deeds', ml: 'അസ്-സ്വാലിഹാത് — സൽകർമ്മങ്ങൾ' },
+    'وتواصوا': { en: 'Watawassaw — And advised each other', ml: 'വതവാസ്വൗ — ഉദ്ബോധനം ചെയ്തവർ' },
+    'بالحق': { en: 'Bil-Haqq — With truth', ml: 'ബിൽ-ഹഖ്ഖ് — സത്യത്തോടെ' },
+    'بالصبر': { en: 'Bis-Sabr — With patience', ml: 'ബിസ്-സ്വബ്ർ — ക്ഷമ' },
+    'النبأ': { en: 'An-Naba — The great news', ml: 'അൻ-നബഅ് — മഹത്തായ വാർത്ത' },
+    'السماء': { en: 'As-Sama — The sky, The heaven', ml: 'അസ്-സമാ — ആകാശം' },
+    'الارض': { en: 'Al-Ard — The earth', ml: 'അൽ-അർദ് — ഭൂമി' },
+    'الشمس': { en: 'Ash-Shams — The sun', ml: 'അശ്-ശംസ് — സൂര്യൻ' },
+    'القمر': { en: 'Al-Qamar — The moon', ml: 'അൽ-ഖമർ — ചന്ദ്രൻ' },
+    'النجوم': { en: 'An-Nujoom — The stars', ml: 'അൻ-നുജൂം — നക്ഷത്രങ്ങൾ' },
+    'الجنة': { en: 'Al-Jannah — Paradise, Garden', ml: 'അൽ-ജന്ന — സ്വർഗ്ഗം' },
+    'النار': { en: 'An-Nar — The Fire, Hell', ml: 'അൻ-നാർ — നരകം, അഗ്നി' },
+    'الملائكة': { en: 'Al-Malaika — The Angels', ml: 'അൽ-മലാഇക — മലക്കുകൾ' },
+    'محمد': { en: 'Muhammad — Praised one (Prophet)', ml: 'മുഹമ്മദ് — പ്രശംസിക്കപ്പെട്ടവൻ' },
+    'ابراهيم': { en: 'Ibrahim — Abraham (Prophet)', ml: 'ഇബ്രാഹീം — നബി' },
+    'موسى': { en: 'Musa — Moses (Prophet)', ml: 'മൂസ — നബി' },
+    'عيسى': { en: "Isa — Jesus (Prophet)", ml: 'ഈസ — നബി' },
+    'ادم': { en: 'Adam — Adam (first human)', ml: 'ആദം — ആദ്യ മനുഷ്യൻ' },
+    'الكتاب': { en: 'Al-Kitab — The Book', ml: 'അൽ-കിതാബ് — ഗ്രന്ഥം' },
+    'القران': { en: 'Al-Quran — The Quran', ml: 'അൽ-ഖുർആൻ' },
+    'الاسلام': { en: 'Al-Islam — Submission to God', ml: 'അൽ-ഇസ്‌ലാം — ദൈവത്തിനു സമർپ്പണം' },
+    'المسلمون': { en: 'Al-Muslimoon — The Muslims', ml: 'അൽ-മുസ്‌ലിമൂൻ — മുസ്‌ലിംകൾ' },
+    'الصلاة': { en: 'As-Salat — The Prayer', ml: 'അസ്-സ്വലാത് — നമസ്കാരം' },
+    'الزكاة': { en: 'Az-Zakat — The Purifying Alms', ml: 'അസ്-സകാത് — സകാത്ത്' },
+    'الصيام': { en: 'As-Siyam — Fasting', ml: 'അസ്-സിയാം — നോമ്പ്' },
+    'الحج': { en: 'Al-Hajj — The Pilgrimage', ml: 'അൽ-ഹജ്ജ് — തീർഥാടനം' },
+    'الجهاد': { en: 'Al-Jihad — Striving in God's cause', ml: 'അൽ-ജിഹാദ് — ദൈവ മാർഗ്ഗത്തിൽ പ്രയത്നം' },
+    'التقوى': { en: 'At-Taqwa — God-consciousness, Piety', ml: 'അത്-തഖ്‌വ — ദൈവഭക്തി' },
+    'الايمان': { en: 'Al-Iman — Faith, Belief', ml: 'അൽ-ഈമാൻ — വിശ്വാസം' },
+    'الكافرون': { en: 'Al-Kafirun — The disbelievers', ml: 'അൽ-കാഫിറൂൻ — നിഷേധികൾ' },
+    'المنافقون': { en: 'Al-Munafiqun — The hypocrites', ml: 'അൽ-മുനാഫിഖൂൻ — കപടന്മാർ' },
+    'الظالمون': { en: 'Az-Zalimun — The wrongdoers', ml: 'അദ്-ദ്വാലിമൂൻ — അക്രമികൾ' },
+    'الصابرون': { en: 'As-Sabirun — The patient ones', ml: 'അസ്-സ്വാബിറൂൻ — ക്ഷമാലുക്കൾ' },
+    'الشيطان': { en: 'Ash-Shaytan — Satan, The Devil', ml: 'അശ്-ശൈത്വാൻ — പിശാച്' },
+    'الجن': { en: 'Al-Jinn — The Jinn (hidden beings)', ml: 'അൽ-ജിൻ — ജിന്ന്' },
+    'الناس': { en: 'An-Nas — Mankind, People', ml: 'അൻ-നാസ് — മനുഷ്യർ' },
+    'نعم': { en: "Na'am — Yes, Blessing", ml: 'നഇം — അതെ, അനുഗ്രഹം' },
+    'خير': { en: 'Khair — Good, Better', ml: 'ഖൈർ — നന്മ' },
+    'شر': { en: 'Sharr — Evil, Bad', ml: 'ശർ — തിന്മ' },
+    'علم': { en: "'Ilm — Knowledge", ml: 'ഇൽം — അറിവ്' },
+    'حكمة': { en: 'Hikmah — Wisdom', ml: 'ഹിക്‌മ — ജ്ഞാനം' },
+    'رحمة': { en: 'Rahma — Mercy, Compassion', ml: 'റഹ്മ — കരുണ' },
+    'نعمة': { en: "Ni'ma — Blessing, Favor", ml: 'നിഅ്മ — അനുഗ്രഹം' },
+    'صبر': { en: 'Sabr — Patience, Perseverance', ml: 'സ്വബ്ർ — ക്ഷമ' },
+    'شكر': { en: 'Shukr — Gratitude, Thanks', ml: 'ശുക്ർ — നന്ദി, കൃതജ്ഞത' },
+    'توبة': { en: 'Tawba — Repentance', ml: 'തൗബ — പശ്ചാത്താപം' },
+    'غفران': { en: 'Ghufran — Forgiveness', ml: 'ഗുഫ്‌റാൻ — മാർഗ്ഗ' },
+    'عذاب': { en: "'Adhab — Punishment, Torment", ml: 'അദ്ദ്വാബ് — ശിക്ഷ' },
+    'ثواب': { en: 'Thawab — Reward', ml: 'ഥവാബ് — പ്രതിഫലം' },
+    'دعاء': { en: "Du'a — Supplication, Prayer", ml: 'ദുആ — പ്രാർഥന' },
+    'ذكر': { en: 'Dhikr — Remembrance of God', ml: 'ദ്ദിക്ർ — ദൈവ സ്മരണ' },
+    'امر': { en: 'Amr — Command, Matter', ml: 'അംർ — കൽपن, കാര്യം' },
+    'نهى': { en: 'Naha — Forbade, Prohibition', ml: 'നഹ — വിലക്കി' },
+    'حلال': { en: 'Halal — Permitted, Lawful', ml: 'ഹലാൽ — അനുവദനീയം' },
+    'حرام': { en: 'Haram — Forbidden, Unlawful', ml: 'ഹറാം — നിഷിദ്ധം' },
+    'الحق': { en: 'Al-Haqq — The Truth, The Right', ml: 'അൽ-ഹഖ്ഖ് — സത്യം' },
+    'الباطل': { en: 'Al-Batil — Falsehood', ml: 'അൽ-ബാത്വിൽ — അസത്യം' },
+    'العدل': { en: "Al-'Adl — Justice", ml: 'അൽ-അദ്ൽ — നീതി' },
+    'الظلم': { en: 'Az-Zulm — Injustice, Oppression', ml: 'അദ്-ദ്വുൽം — അനീതി' },
+    'الحياة': { en: 'Al-Hayah — Life', ml: 'അൽ-ഹയ്യ — ജീവൻ' },
+    'الموت': { en: 'Al-Mawt — Death', ml: 'അൽ-മൗത്ത് — മരണം' },
+    'قيامة': { en: 'Qiyama — Day of Resurrection', ml: 'ഖിയാമ — ഉയർത്തെഴുന്നേൽپ്' },
+    'حساب': { en: 'Hisab — Reckoning, Account', ml: 'ഹിസാബ് — വിചാരണ' },
+    'ميزان': { en: 'Mizan — The Scale (balance)', ml: 'മീസാൻ — ത്രാസ്' },
+    'صراط': { en: 'Sirat — Path, Bridge', ml: 'സ്വിറാത്' — പാലം, വഴി' },
+    'جنة': { en: 'Jannah — Paradise', ml: 'ജന്ന — സ്വർഗ്ഗം' },
+    'نار': { en: 'Nar — Fire, Hell', ml: 'നാർ — നരകം' },
+    'ماء': { en: "Ma' — Water", ml: 'മാഅ് — വെള്ളം' },
+    'نور': { en: 'Nur — Light', ml: 'നൂർ — പ്രകാശം' },
+    'ظلام': { en: 'Dhalam — Darkness', ml: 'ദ്ദ്വലാം — ഇരുട്ട്' },
+    'قلب': { en: 'Qalb — Heart', ml: 'ഖൽബ് — ഹൃദയം' },
+    'عقل': { en: "'Aql — Intellect, Reason", ml: 'അഖ്ൽ — ബുദ്ധി' },
+    'روح': { en: 'Ruh — Soul, Spirit', ml: 'റൂഹ് — ആത്മാവ്' },
+    'امة': { en: 'Ummah — Community, Nation', ml: 'ഉമ്മ — സമൂഹം' },
+  };
+
+  // Try exact match first
+  if (dict[clean]) return dict[clean];
+  if (dict[original]) return dict[original];
+
+  // Try partial match
+  for (const key of Object.keys(dict)) {
+    if (clean.includes(key) || key.includes(clean)) return dict[key];
+  }
+
+  return {
+    en: 'Tap to explore this word's meaning',
+    ml: 'ഈ വാക്കിന്റെ അർഥം കണ്ടെത്തുക'
+  };
 }
 
 // ===================== AUDIO HELPERS =====================
