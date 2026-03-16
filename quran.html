@@ -235,6 +235,7 @@ body::before {
 .popup-text { font-size:0.78rem; line-height:1.5; color:var(--text); }
 .popup-text-ml { font-family:var(--ml); font-size:0.8rem; line-height:1.6; color:var(--text2); }
 .popup-loading { text-align:center; font-size:0.62rem; color:var(--text3); letter-spacing:0.15em; padding:6px 0; }
+.popup-divider-sub { font-size:0.5rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--teal); margin:8px 0 6px; }
 
 /* ── STATES ── */
 .loading-state {
@@ -570,6 +571,7 @@ let audio = null;
 let audioMode = null;
 let popup = null;
 let wordData = {};
+let mlVerseData = {};
 
 // ── SIDEBAR ─────────────────────────────────────────────────
 function buildSurahList(filter) {
@@ -646,14 +648,13 @@ function setContent(html) {
 // ── FETCH VERSES ─────────────────────────────────────────────
 async function fetchVerses(num) {
   try {
-    const [rAr, rEn, rMl, rWdEn, rWdMl] = await Promise.all([
+    const [rAr, rEn, rMl, rWdEn] = await Promise.all([
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/ar.alafasy"),
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/en.sahih"),
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/ml.abdulhameed"),
-      fetch("https://api.quran.com/api/v4/verses/by_chapter/" + num + "?language=en&words=true&word_fields=text_uthmani%2Ctranslation&per_page=300&page=1"),
-      fetch("https://api.quran.com/api/v4/verses/by_chapter/" + num + "?language=ml&words=true&word_fields=text_uthmani%2Ctranslation&per_page=300&page=1")
+      fetch("https://api.quran.com/api/v4/verses/by_chapter/" + num + "?language=en&words=true&word_fields=text_uthmani%2Ctranslation&per_page=300&page=1")
     ]);
-    const [dAr, dEn, dMl, dWdEn, dWdMl] = await Promise.all([rAr.json(), rEn.json(), rMl.json(), rWdEn.json(), rWdMl.json()]);
+    const [dAr, dEn, dMl, dWdEn] = await Promise.all([rAr.json(), rEn.json(), rMl.json(), rWdEn.json()]);
     if (dAr.code !== 200) throw new Error("API error");
 
     const ar = dAr.data.ayahs;
@@ -679,22 +680,12 @@ async function fetchVerses(num) {
         }
       });
     }
-    // Malayalam word meanings
-    if (dWdMl.verses) {
-      dWdMl.verses.forEach(verse => {
-        const vn = verse.verse_number;
-        let wi = 0;
-        if (verse.words) {
-          verse.words.forEach(w => {
-            if (w.char_type_name === "word") {
-              const key = vn + ":" + wi;
-              if (!wordData[key]) wordData[key] = {};
-              wordData[key].ml = w.translation ? w.translation.text : "";
-              wi++;
-            }
-          });
-        }
-      });
+
+
+    // Store full Malayalam verse text for popup use
+    mlVerseData = {};
+    if (ml) {
+      ml.forEach((v, i) => { mlVerseData[i + 1] = v.text; });
     }
 
     document.getElementById("loadingState").style.display = "none";
@@ -870,8 +861,8 @@ function showWordPopup(e, word, verseNum, wordIdx) {
   const dictMatch = WORDS[clean] || WORDS[word];
   if (!enMeaning && dictMatch) enMeaning = dictMatch.en;
 
-  // 3. Malayalam from API word data
-  let mlMeaning = apiWord && apiWord.ml ? apiWord.ml : "";
+  // 3. Malayalam: show full verse translation (word-by-word ML not available via API)
+  let mlMeaning = mlVerseData[verseNum] || "";
 
   // 4. Fallback ML to static dictionary
   if (!mlMeaning && dictMatch) mlMeaning = dictMatch.ml;
@@ -887,7 +878,8 @@ function showWordPopup(e, word, verseNum, wordIdx) {
     '<div class="popup-word">' + word + '</div>' +
     '<div class="popup-line"></div>' +
     '<div class="popup-row"><div class="popup-tag">EN</div><div class="popup-text">' + enMeaning + '</div></div>' +
-    '<div class="popup-row"><div class="popup-tag">ML</div><div class="popup-text-ml">' + mlMeaning + '</div></div>';
+    '<div class="popup-divider-sub">Malayalam Verse</div>' +
+    '<div class="popup-row"><div class="popup-text-ml">' + mlMeaning + '</div></div>';
 
   document.body.appendChild(popup);
 
