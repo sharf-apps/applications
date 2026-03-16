@@ -646,32 +646,51 @@ function setContent(html) {
 // ── FETCH VERSES ─────────────────────────────────────────────
 async function fetchVerses(num) {
   try {
-    const [rAr, rEn, rMl, rWd] = await Promise.all([
+    const [rAr, rEn, rMl, rWdEn, rWdMl] = await Promise.all([
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/ar.alafasy"),
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/en.sahih"),
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/ml.abdulhameed"),
-      fetch("https://api.quran.com/api/v4/verses/by_chapter/" + num + "?language=en&words=true&word_fields=text_uthmani%2Ctranslation&per_page=300&page=1")
+      fetch("https://api.quran.com/api/v4/verses/by_chapter/" + num + "?language=en&words=true&word_fields=text_uthmani%2Ctranslation&per_page=300&page=1"),
+      fetch("https://api.quran.com/api/v4/verses/by_chapter/" + num + "?language=ml&words=true&word_fields=text_uthmani%2Ctranslation&per_page=300&page=1")
     ]);
-    const [dAr, dEn, dMl, dWd] = await Promise.all([rAr.json(), rEn.json(), rMl.json(), rWd.json()]);
+    const [dAr, dEn, dMl, dWdEn, dWdMl] = await Promise.all([rAr.json(), rEn.json(), rMl.json(), rWdEn.json(), rWdMl.json()]);
     if (dAr.code !== 200) throw new Error("API error");
 
     const ar = dAr.data.ayahs;
     const en = dEn.data.ayahs;
     const ml = dMl.code === 200 ? dMl.data.ayahs : null;
 
-    // Build word meanings map: key = "verseNum:wordPos" -> {ar, en}
+    // Build word meanings map: key = "verseNum:wordPos" -> {en, ml}
     wordData = {};
-    if (dWd.verses) {
-      dWd.verses.forEach(verse => {
+    // English word meanings
+    if (dWdEn.verses) {
+      dWdEn.verses.forEach(verse => {
         const vn = verse.verse_number;
+        let wi = 0;
         if (verse.words) {
-          verse.words.forEach((w, i) => {
+          verse.words.forEach(w => {
             if (w.char_type_name === "word") {
-              const key = vn + ":" + i;
-              wordData[key] = {
-                ar: w.text_uthmani || "",
-                en: w.translation ? w.translation.text : ""
-              };
+              const key = vn + ":" + wi;
+              if (!wordData[key]) wordData[key] = {};
+              wordData[key].en = w.translation ? w.translation.text : "";
+              wi++;
+            }
+          });
+        }
+      });
+    }
+    // Malayalam word meanings
+    if (dWdMl.verses) {
+      dWdMl.verses.forEach(verse => {
+        const vn = verse.verse_number;
+        let wi = 0;
+        if (verse.words) {
+          verse.words.forEach(w => {
+            if (w.char_type_name === "word") {
+              const key = vn + ":" + wi;
+              if (!wordData[key]) wordData[key] = {};
+              wordData[key].ml = w.translation ? w.translation.text : "";
+              wi++;
             }
           });
         }
@@ -851,10 +870,13 @@ function showWordPopup(e, word, verseNum, wordIdx) {
   const dictMatch = WORDS[clean] || WORDS[word];
   if (!enMeaning && dictMatch) enMeaning = dictMatch.en;
 
-  // 3. Malayalam from static dictionary
-  let mlMeaning = dictMatch ? dictMatch.ml : "";
+  // 3. Malayalam from API word data
+  let mlMeaning = apiWord && apiWord.ml ? apiWord.ml : "";
 
-  // 4. Final fallbacks
+  // 4. Fallback ML to static dictionary
+  if (!mlMeaning && dictMatch) mlMeaning = dictMatch.ml;
+
+  // 5. Final fallbacks
   if (!enMeaning) enMeaning = "Meaning not available";
   if (!mlMeaning) mlMeaning = "അർഥം ലഭ്യമല്ല";
 
