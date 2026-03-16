@@ -569,6 +569,7 @@ let showML = true;
 let audio = null;
 let audioMode = null;
 let popup = null;
+let wordData = {};
 
 // ── SIDEBAR ─────────────────────────────────────────────────
 function buildSurahList(filter) {
@@ -645,17 +646,37 @@ function setContent(html) {
 // ── FETCH VERSES ─────────────────────────────────────────────
 async function fetchVerses(num) {
   try {
-    const [rAr, rEn, rMl] = await Promise.all([
+    const [rAr, rEn, rMl, rWd] = await Promise.all([
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/ar.alafasy"),
       fetch("https://api.alquran.cloud/v1/surah/" + num + "/en.sahih"),
-      fetch("https://api.alquran.cloud/v1/surah/" + num + "/ml.abdulhameed")
+      fetch("https://api.alquran.cloud/v1/surah/" + num + "/ml.abdulhameed"),
+      fetch("https://api.quran.com/api/v4/verses/by_chapter/" + num + "?language=en&words=true&word_fields=text_uthmani%2Ctranslation&per_page=300&page=1")
     ]);
-    const [dAr, dEn, dMl] = await Promise.all([rAr.json(), rEn.json(), rMl.json()]);
+    const [dAr, dEn, dMl, dWd] = await Promise.all([rAr.json(), rEn.json(), rMl.json(), rWd.json()]);
     if (dAr.code !== 200) throw new Error("API error");
 
     const ar = dAr.data.ayahs;
     const en = dEn.data.ayahs;
     const ml = dMl.code === 200 ? dMl.data.ayahs : null;
+
+    // Build word meanings map: key = "verseNum:wordPos" -> {ar, en}
+    wordData = {};
+    if (dWd.verses) {
+      dWd.verses.forEach(verse => {
+        const vn = verse.verse_number;
+        if (verse.words) {
+          verse.words.forEach((w, i) => {
+            if (w.char_type_name === "word") {
+              const key = vn + ":" + i;
+              wordData[key] = {
+                ar: w.text_uthmani || "",
+                en: w.translation ? w.translation.text : ""
+              };
+            }
+          });
+        }
+      });
+    }
 
     document.getElementById("loadingState").style.display = "none";
     const versesEl = document.getElementById("verses");
@@ -690,9 +711,9 @@ function buildCard(av, ev, mv, vn) {
        </div>`
     : "";
 
-  const words = av.text.split(" ").map(w => {
+  const words = av.text.split(" ").map((w, wi) => {
     const ws = w.replace(/'/g, "&#39;");
-    return `<span class="arabic-word" onclick="showWordPopup(event,'${ws}')">${w}</span>`;
+    return `<span class="arabic-word" onclick="showWordPopup(event,'${ws}',${vn},${wi})">${w}</span>`;
   }).join(" ");
 
   return `
@@ -816,24 +837,26 @@ function navigate(dir) {
 }
 
 // ── WORD POPUP ───────────────────────────────────────────────
-function showWordPopup(e, word) {
+function showWordPopup(e, word, verseNum, wordIdx) {
   e.stopPropagation();
   if (popup) { popup.remove(); popup = null; }
 
-  // Clean diacritics for matching
+  // 1. Try live API word data (from quran.com word-by-word)
+  const apiKey = verseNum + ":" + wordIdx;
+  const apiWord = wordData[apiKey];
+  let enMeaning = apiWord ? apiWord.en : "";
+
+  // 2. Fallback to static dictionary for English
   const clean = word.replace(/[\u064B-\u065F\u0610-\u061A\u06D6-\u06DC]/g, "");
-  let meaning = WORDS[clean] || WORDS[word];
+  const dictMatch = WORDS[clean] || WORDS[word];
+  if (!enMeaning && dictMatch) enMeaning = dictMatch.en;
 
-  // Partial match fallback
-  if (!meaning) {
-    for (const k of Object.keys(WORDS)) {
-      if (clean.includes(k) || k.includes(clean)) { meaning = WORDS[k]; break; }
-    }
-  }
+  // 3. Malayalam from static dictionary
+  let mlMeaning = dictMatch ? dictMatch.ml : "";
 
-  if (!meaning) {
-    meaning = { en: "Meaning not in dictionary yet", ml: "അർഥം കണ്ടെത്തിയില്ല" };
-  }
+  // 4. Final fallbacks
+  if (!enMeaning) enMeaning = "Meaning not available";
+  if (!mlMeaning) mlMeaning = "അർഥം ലഭ്യമല്ല";
 
   popup = document.createElement("div");
   popup.className = "word-popup";
@@ -841,15 +864,13 @@ function showWordPopup(e, word) {
     '<button class="popup-close" onclick="closePopup()">&#10005;</button>' +
     '<div class="popup-word">' + word + '</div>' +
     '<div class="popup-line"></div>' +
-    '<div class="popup-row"><div class="popup-tag">EN</div><div class="popup-text">'  + meaning.en + '</div></div>' +
-    '<div class="popup-row"><div class="popup-tag">ML</div><div class="popup-text-ml">' + meaning.ml + '</div></div>';
+    '<div class="popup-row"><div class="popup-tag">EN</div><div class="popup-text">' + enMeaning + '</div></div>' +
+    '<div class="popup-row"><div class="popup-tag">ML</div><div class="popup-text-ml">' + mlMeaning + '</div></div>';
 
   document.body.appendChild(popup);
 
-  // Position
-  const margin = 12;
+  const margin = 12, pw = 270, ph = 150;
   const vw = window.innerWidth, vh = window.innerHeight;
-  const pw = 270, ph = 150;
   let left = e.clientX - pw / 2;
   let top  = e.clientY + 14;
   if (left < margin) left = margin;
